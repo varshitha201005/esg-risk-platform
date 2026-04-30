@@ -8,3 +8,4 @@ matplotlib
 fpdf2
 streamlit-authenticator
 bcrypt
+Pillow

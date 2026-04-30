@@ -90,7 +90,7 @@ if authentication_status == False:
 
 elif authentication_status == None:
     st.stop()
-    
+
 elif authentication_status:
 
     # ─── Sample Dataset ──────────────────────────────────────────────────────
@@ -342,7 +342,12 @@ elif authentication_status:
         return results, scaler
 
     # ─── Sidebar ─────────────────────────────────────────────────────────────
-    st.sidebar.image("esg_logo.png", use_container_width=True)
+    from PIL import Image
+import os
+
+logo_path = os.path.join(os.path.dirname(__file__), "esg_logo.png")
+if os.path.exists(logo_path):
+    st.sidebar.image(logo_path, use_container_width=True)
     st.sidebar.title("TripleLens")
     st.sidebar.markdown(f"👤 Welcome, **{name}**!")
     st.sidebar.markdown("---")

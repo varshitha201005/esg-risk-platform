@@ -79,31 +79,26 @@ if not st.session_state.get("authentication_status"):
     </div>
     """, unsafe_allow_html=True)
 
+if not st.session_state.get("authentication_status"):
+    st.markdown("""
+    <div style='text-align:center; padding: 20px;'>
+        <h1>🌿 TripleLens - ESG Risk Analysis Platform</h1>
+        <p style='color:#666'>Please login to access the platform</p>
+    </div>
+    """, unsafe_allow_html=True)
+
 authenticator.login(location="main")
 name = st.session_state.get("name")
 authentication_status = st.session_state.get("authentication_status")
 username = st.session_state.get("username")
 
 if authentication_status == False:
-    st.markdown("""
-    <div style='text-align:center; padding: 20px;'>
-        <h1>🌿 TripleLens - ESG Risk Analysis Platform</h1>
-        <p style='color:#666'>Please login to access the platform</p>
-    </div>
-    """, unsafe_allow_html=True)
     st.error("❌ Incorrect username or password. Please try again.")
     st.info("💡 Default credentials — Username: `admin` | Password: `admin123`")
     st.stop()
 
 elif authentication_status == None:
-    st.markdown("""
-    <div style='text-align:center; padding: 20px;'>
-        <h1>🌿 TripleLens - ESG Risk Analysis Platform</h1>
-        <p style='color:#666'>Please login to access the platform</p>
-    </div>
-    """, unsafe_allow_html=True)
     st.stop()
-
 elif authentication_status:
 
     # ─── Sample Dataset ──────────────────────────────────────────────────────

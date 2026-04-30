@@ -17,8 +17,8 @@ warnings.filterwarnings('ignore')
 
 # ─── Page Config ───────────────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="ESG Risk & Insight Platform",
-    page_icon="🌿",
+    page_title="TripleLens - ESG Risk Analysis Platform",
+    page_icon="esg-risk-platform1/esg_logo.png",
     layout="wide"
 )
 
@@ -344,8 +344,8 @@ elif authentication_status:
         return results, scaler
 
     # ─── Sidebar ─────────────────────────────────────────────────────────────
-    st.sidebar.image("https://img.icons8.com/color/96/leaf.png", width=60)
-    st.sidebar.title("🌿 ESG Platform")
+    st.sidebar.image("esg-risk-platform1/esg_logo.png", width=150)
+    st.sidebar.title("TripleLens")
     st.sidebar.markdown(f"👤 Welcome, **{name}**!")
     st.sidebar.markdown("---")
 
@@ -385,7 +385,7 @@ elif authentication_status:
     ]
 
     # ─── Header ──────────────────────────────────────────────────────────────
-    st.markdown("## 🌿 ESG Risk & Insight Platform")
+    st.markdown("## TripleLens - ESG Risk Analysis Platform")
     st.markdown("Analyze companies based on Environmental, Social, and Governance data using Machine Learning.")
     if len(risk_filter) < 3:
         st.info(f"🔍 Filtering by: **{', '.join(risk_filter)}** | ESG Score: **{score_min} – {score_max}**")

@@ -18,7 +18,7 @@ warnings.filterwarnings('ignore')
 # ─── Page Config ───────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="TripleLens - ESG Risk Analysis Platform",
-    page_icon="esg-risk-platform1/esg_logo.png",
+    page_icon="esg_logo.png",
     layout="wide"
 )
 
@@ -344,7 +344,7 @@ elif authentication_status:
         return results, scaler
 
     # ─── Sidebar ─────────────────────────────────────────────────────────────
-    st.sidebar.image("esg-risk-platform1/esg_logo.png", width=150)
+    st.sidebar.image("esg_logo.png", use_container_width=True)
     st.sidebar.title("TripleLens")
     st.sidebar.markdown(f"👤 Welcome, **{name}**!")
     st.sidebar.markdown("---")

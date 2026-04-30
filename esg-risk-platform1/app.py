@@ -71,7 +71,7 @@ authenticator = stauth.Authenticate(
 
 # ─── Login Page ────────────────────────────────────────────────────────────────
 # Show login header
-if not authentication_status:
+if not st.session_state.get("authentication_status"):
     st.markdown("""
     <div style='text-align:center; padding: 20px;'>
         <h1>🌿 TripleLens - ESG Risk Analysis Platform</h1>

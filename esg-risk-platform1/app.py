@@ -71,12 +71,13 @@ authenticator = stauth.Authenticate(
 
 # ─── Login Page ────────────────────────────────────────────────────────────────
 # Show login header
-st.markdown("""
-<div style='text-align:center; padding: 20px;'>
-    <h1>🌿 ESG Risk & Insight Platform</h1>
-    <p style='color:#666'>Please login to access the platform</p>
-</div>
-""", unsafe_allow_html=True)
+if not authentication_status:
+    st.markdown("""
+    <div style='text-align:center; padding: 20px;'>
+        <h1>🌿 TripleLens - ESG Risk Analysis Platform</h1>
+        <p style='color:#666'>Please login to access the platform</p>
+    </div>
+    """, unsafe_allow_html=True)
 
 authenticator.login(location="main")
 name = st.session_state.get("name")

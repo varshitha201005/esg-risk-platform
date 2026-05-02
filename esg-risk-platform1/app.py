@@ -882,37 +882,20 @@ with tab4:
         col3.metric("Recall", f"{r['recall']:.2%}")
         col4.metric("F1 Score", f"{r['f1']:.2%}")
 
-st.markdown("### 🔲 Model Performance Overview")
+    st.markdown("### 🔲 Model Performance Overview")
 
-import numpy as np
+    cm = np.array(r['confusion_matrix'])
 
-cm = np.array(r['confusion_matrix'])
+    total = cm.sum()
+    correct = np.trace(cm)
+    accuracy = correct / total if total != 0 else 0
 
-total = cm.sum()
-correct = np.trace(cm)
-accuracy = correct / total if total != 0 else 0
+    col1, col2, col3 = st.columns(3)
 
-col1, col2, col3 = st.columns(3)
+    col1.metric("Correct Predictions", int(correct))
+    col2.metric("Total Samples", int(total))
+    col3.metric("Accuracy", f"{accuracy:.2%}")
 
-col1.metric(
-    "✅ Correct Predictions",
-    f"{correct}",
-    f"{accuracy:.1%}"
-)
-
-col2.metric(
-    "📊 Total Samples",
-    f"{total}"
-)
-
-col3.metric(
-    "❌ Errors",
-    f"{total - correct}",
-    f"{(1 - accuracy):.1%}"
-)
-
-# subtle visual enhancement
-st.progress(float(accuracy))
 # ══════════════════════════════════════════════════════════════════════════════
 # TAB 5 — COMPANY INSIGHTS
 # ══════════════════════════════════════════════════════════════════════════════

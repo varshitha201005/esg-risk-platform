@@ -882,7 +882,7 @@ with tab4:
         col3.metric("Recall", f"{r['recall']:.2%}")
         col4.metric("F1 Score", f"{r['f1']:.2%}")
 
-    st.markdown("### 🔲 Model Performance Overview")
+    st.markdown("### Model Performance Overview")
 
     cm = np.array(r['confusion_matrix'])
 

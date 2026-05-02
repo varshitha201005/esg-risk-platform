@@ -1125,7 +1125,7 @@ with tab2:
         # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         st.markdown("### ⚠️ Outlier Detection")
         outlier_col = st.selectbox("Select column to check for outliers",
-                                   ['esg_score','environmental_score',
+                                   ['environmental_score',
                                     'social_score','governance_score'])
         mean_v = filtered_df[outlier_col].mean()
         std_v  = filtered_df[outlier_col].std()

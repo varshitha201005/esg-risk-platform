@@ -599,58 +599,176 @@ tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
 # TAB 1 — DASHBOARD
 # ══════════════════════════════════════════════════════════════════════════════
 with tab1:
-    st.subheader("📊 ESG Risk Overview")
     if filtered_df.empty:
         st.warning("⚠️ No companies match the current filters.")
     else:
-        col1, col2, col3, col4 = st.columns(4)
+        # ── KPI Cards ──
+        st.markdown("### 📊 Key Performance Indicators")
+        col1, col2, col3, col4, col5 = st.columns(5)
         with col1:
-            st.metric("Total Companies", len(filtered_df))
+            st.markdown(f"""
+            <div style='background:linear-gradient(135deg,#1a3c5e,#2980b9);
+                        border-radius:14px;padding:20px;text-align:center;
+                        box-shadow:0 4px 15px rgba(0,0,0,0.1);'>
+                <p style='color:rgba(255,255,255,0.8);margin:0;font-size:0.85rem;'>Total Companies</p>
+                <h2 style='color:white;margin:5px 0;font-size:2rem;'>{len(filtered_df)}</h2>
+            </div>""", unsafe_allow_html=True)
         with col2:
-            st.metric("✅ Low Risk", len(filtered_df[filtered_df['risk_label'] == 'Low Risk']))
+            st.markdown(f"""
+            <div style='background:linear-gradient(135deg,#2ecc71,#27ae60);
+                        border-radius:14px;padding:20px;text-align:center;
+                        box-shadow:0 4px 15px rgba(0,0,0,0.1);'>
+                <p style='color:rgba(255,255,255,0.8);margin:0;font-size:0.85rem;'>✅ Low Risk</p>
+                <h2 style='color:white;margin:5px 0;font-size:2rem;'>{len(filtered_df[filtered_df['risk_label']=='Low Risk'])}</h2>
+            </div>""", unsafe_allow_html=True)
         with col3:
-            st.metric("⚠️ Medium Risk", len(filtered_df[filtered_df['risk_label'] == 'Medium Risk']))
+            st.markdown(f"""
+            <div style='background:linear-gradient(135deg,#f39c12,#e67e22);
+                        border-radius:14px;padding:20px;text-align:center;
+                        box-shadow:0 4px 15px rgba(0,0,0,0.1);'>
+                <p style='color:rgba(255,255,255,0.8);margin:0;font-size:0.85rem;'>⚠️ Medium Risk</p>
+                <h2 style='color:white;margin:5px 0;font-size:2rem;'>{len(filtered_df[filtered_df['risk_label']=='Medium Risk'])}</h2>
+            </div>""", unsafe_allow_html=True)
         with col4:
-            st.metric("🚨 High Risk", len(filtered_df[filtered_df['risk_label'] == 'High Risk']))
+            st.markdown(f"""
+            <div style='background:linear-gradient(135deg,#e74c3c,#c0392b);
+                        border-radius:14px;padding:20px;text-align:center;
+                        box-shadow:0 4px 15px rgba(0,0,0,0.1);'>
+                <p style='color:rgba(255,255,255,0.8);margin:0;font-size:0.85rem;'>🚨 High Risk</p>
+                <h2 style='color:white;margin:5px 0;font-size:2rem;'>{len(filtered_df[filtered_df['risk_label']=='High Risk'])}</h2>
+            </div>""", unsafe_allow_html=True)
+        with col5:
+            avg_esg = round(filtered_df['esg_score'].mean(), 1)
+            st.markdown(f"""
+            <div style='background:linear-gradient(135deg,#9b59b6,#8e44ad);
+                        border-radius:14px;padding:20px;text-align:center;
+                        box-shadow:0 4px 15px rgba(0,0,0,0.1);'>
+                <p style='color:rgba(255,255,255,0.8);margin:0;font-size:0.85rem;'>📊 Avg ESG Score</p>
+                <h2 style='color:white;margin:5px 0;font-size:2rem;'>{avg_esg}</h2>
+            </div>""", unsafe_allow_html=True)
 
-        st.markdown("---")
+        st.markdown("<br>", unsafe_allow_html=True)
+
+        # ── Charts Row 1 ──
         col1, col2 = st.columns(2)
         with col1:
             fig_pie = px.pie(
                 filtered_df, names='risk_label',
-                title='Risk Distribution',
+                title='🍩 Risk Distribution',
                 color='risk_label',
+                hole=0.5,
                 color_discrete_map={"Low Risk": "#2ecc71", "Medium Risk": "#f39c12", "High Risk": "#e74c3c"}
             )
-            fig_pie.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
+            fig_pie.update_layout(
+                paper_bgcolor='rgba(0,0,0,0)',
+                plot_bgcolor='rgba(0,0,0,0)',
+                legend=dict(orientation="h", yanchor="bottom", y=-0.2),
+                title_font_size=16
+            )
+            fig_pie.update_traces(textposition='inside', textinfo='percent+label')
             st.plotly_chart(fig_pie, use_container_width=True)
+
         with col2:
             fig_bar = px.bar(
                 filtered_df.sort_values('esg_score', ascending=False).head(20),
-                x='company', y='esg_score', color='risk_label',
-                title='Top 20 Companies ESG Scores',
-                color_discrete_map={"Low Risk": "#2ecc71", "Medium Risk": "#f39c12", "High Risk": "#e74c3c"}
+                x='company', y='esg_score',
+                color='risk_label',
+                title='🏆 Top 20 Companies by ESG Score',
+                color_discrete_map={"Low Risk": "#2ecc71", "Medium Risk": "#f39c12", "High Risk": "#e74c3c"},
+                text='esg_score'
             )
-            fig_bar.update_layout(xaxis_tickangle=-45, paper_bgcolor='rgba(0,0,0,0)')
+            fig_bar.update_layout(
+                xaxis_tickangle=-45,
+                paper_bgcolor='rgba(0,0,0,0)',
+                plot_bgcolor='rgba(0,0,0,0)',
+                showlegend=True,
+                title_font_size=16
+            )
+            fig_bar.update_traces(texttemplate='%{text}', textposition='outside')
             st.plotly_chart(fig_bar, use_container_width=True)
 
+        # ── Charts Row 2 ──
         col1, col2 = st.columns(2)
         with col1:
             fig_scatter = px.scatter(
-                filtered_df, x='environmental_score', y='social_score',
-                size='esg_score', color='risk_label', hover_name='company',
-                title='Environmental vs Social Score',
+                filtered_df,
+                x='environmental_score',
+                y='social_score',
+                size='esg_score',
+                color='risk_label',
+                hover_name='company',
+                hover_data=['governance_score', 'esg_score'],
+                title='🔵 Environmental vs Social Score',
                 color_discrete_map={"Low Risk": "#2ecc71", "Medium Risk": "#f39c12", "High Risk": "#e74c3c"}
             )
+            fig_scatter.update_layout(
+                paper_bgcolor='rgba(0,0,0,0)',
+                plot_bgcolor='rgba(0,0,0,0)',
+                title_font_size=16
+            )
             st.plotly_chart(fig_scatter, use_container_width=True)
+
         with col2:
             fig_box = px.box(
-                filtered_df, x='risk_label', y='esg_score', color='risk_label',
-                title='ESG Score Distribution by Risk',
-                color_discrete_map={"Low Risk": "#2ecc71", "Medium Risk": "#f39c12", "High Risk": "#e74c3c"}
+                filtered_df, x='risk_label', y='esg_score',
+                color='risk_label',
+                title='📦 ESG Score Distribution by Risk',
+                color_discrete_map={"Low Risk": "#2ecc71", "Medium Risk": "#f39c12", "High Risk": "#e74c3c"},
+                points="all"
+            )
+            fig_box.update_layout(
+                paper_bgcolor='rgba(0,0,0,0)',
+                plot_bgcolor='rgba(0,0,0,0)',
+                title_font_size=16
             )
             st.plotly_chart(fig_box, use_container_width=True)
 
+        # ── Charts Row 3 ──
+        st.markdown("### 📈 ESG Category Analysis")
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            fig_env = px.histogram(
+                filtered_df, x='environmental_score',
+                color='risk_label',
+                title='🌱 Environmental Score Distribution',
+                color_discrete_map={"Low Risk": "#2ecc71", "Medium Risk": "#f39c12", "High Risk": "#e74c3c"},
+                nbins=20
+            )
+            fig_env.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
+            st.plotly_chart(fig_env, use_container_width=True)
+
+        with col2:
+            fig_soc = px.histogram(
+                filtered_df, x='social_score',
+                color='risk_label',
+                title='🤝 Social Score Distribution',
+                color_discrete_map={"Low Risk": "#2ecc71", "Medium Risk": "#f39c12", "High Risk": "#e74c3c"},
+                nbins=20
+            )
+            fig_soc.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
+            st.plotly_chart(fig_soc, use_container_width=True)
+
+        with col3:
+            fig_gov = px.histogram(
+                filtered_df, x='governance_score',
+                color='risk_label',
+                title='🏛️ Governance Score Distribution',
+                color_discrete_map={"Low Risk": "#2ecc71", "Medium Risk": "#f39c12", "High Risk": "#e74c3c"},
+                nbins=20
+            )
+            fig_gov.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
+            st.plotly_chart(fig_gov, use_container_width=True)
+
+        # ── Bottom Table ──
+        st.markdown("### 🏅 Top 10 Safest Companies to Invest")
+        top10 = filtered_df.nlargest(10, 'esg_score')[
+            ['company', 'environmental_score', 'social_score', 'governance_score', 'esg_score', 'risk_label']
+        ].reset_index(drop=True)
+        top10.index += 1
+        st.dataframe(
+            top10.style.background_gradient(subset=['esg_score'], cmap='Greens'),
+            use_container_width=True
+        )
 # ══════════════════════════════════════════════════════════════════════════════
 # TAB 2 — DATA PREVIEW
 # ══════════════════════════════════════════════════════════════════════════════

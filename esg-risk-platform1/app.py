@@ -678,9 +678,9 @@ with tab1:
 
         col1, col2 = st.columns(2)
         with col1:
+            st.markdown("#### Risk Tier Share (% of Companies)")
             fig_pie = px.pie(
                 filtered_df, names='risk_label',
-                title='Risk Tier Share (% of Companies)',
                 color='risk_label', hole=0.5,
                 color_discrete_map=RISK_COLORS
             )
@@ -693,6 +693,7 @@ with tab1:
             st.plotly_chart(fig_pie, use_container_width=True)
 
         with col2:
+            st.markdown("#### Avg E / S / G Score by Risk Tier")
             avg_by_risk = filtered_df.groupby('risk_label')[
                 ['environmental_score', 'social_score', 'governance_score']
             ].mean().reset_index()
@@ -708,7 +709,6 @@ with tab1:
                 avg_by_risk_melted,
                 x='risk_label', y='Avg Score', color='Category',
                 barmode='group',
-                title='Avg E / S / G Score by Risk Tier',
                 color_discrete_sequence=['#27ae60', '#2980b9', '#8e44ad'],
                 text_auto='.1f'
             )

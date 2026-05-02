@@ -671,30 +671,28 @@ with tab1:
         # Left : Donut — what % of companies fall in each risk tier
         # Right: Grouped bar — avg E / S / G score per risk tier
         # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        st.markdown("""
+        <div style='border-left:4px solid #2980b9;padding:4px 0 4px 14px;margin-bottom:16px;'>
+            <span style='font-size:1.05rem;font-weight:600;color:#1a3c5e;'>🍩 Risk Overview</span>
+        </div>""", unsafe_allow_html=True)
+
         col1, col2 = st.columns(2)
         with col1:
-            st.markdown("""
-            <div style='border-left:4px solid #2980b9;padding:4px 0 4px 14px;margin-bottom:12px;'>
-                <span style='font-size:1.05rem;font-weight:600;color:#1a3c5e;'>🍩 Risk Tier Share</span>
-            </div>""", unsafe_allow_html=True)
             fig_pie = px.pie(
                 filtered_df, names='risk_label',
+                title='Risk Tier Share (% of Companies)',
                 color='risk_label', hole=0.5,
                 color_discrete_map=RISK_COLORS
             )
             fig_pie.update_layout(
                 paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
                 legend=dict(orientation="h", yanchor="bottom", y=-0.25),
-                margin=dict(t=20, b=60)
+                title_font_size=15, margin=dict(t=50, b=60)
             )
             fig_pie.update_traces(textposition='inside', textinfo='percent+label')
             st.plotly_chart(fig_pie, use_container_width=True)
 
         with col2:
-            st.markdown("""
-            <div style='border-left:4px solid #2980b9;padding:4px 0 4px 14px;margin-bottom:12px;'>
-                <span style='font-size:1.05rem;font-weight:600;color:#1a3c5e;'>📊 Avg E / S / G by Risk Tier</span>
-            </div>""", unsafe_allow_html=True)
             avg_by_risk = filtered_df.groupby('risk_label')[
                 ['environmental_score', 'social_score', 'governance_score']
             ].mean().reset_index()
@@ -710,6 +708,7 @@ with tab1:
                 avg_by_risk_melted,
                 x='risk_label', y='Avg Score', color='Category',
                 barmode='group',
+                title='Avg E / S / G Score by Risk Tier',
                 color_discrete_sequence=['#27ae60', '#2980b9', '#8e44ad'],
                 text_auto='.1f'
             )
@@ -717,14 +716,12 @@ with tab1:
                 paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
                 xaxis_title='Risk Level', yaxis_title='Average Score (0–100)',
                 legend_title='ESG Category', title_font_size=15,
-                margin=dict(t=20),
                 yaxis=dict(range=[0, 110], gridcolor='rgba(0,0,0,0.05)')
             )
             fig_grouped.update_traces(textposition='outside')
             st.plotly_chart(fig_grouped, use_container_width=True)
 
         st.markdown("<hr style='border:1px solid #dce3ea;margin:8px 0 20px;'>", unsafe_allow_html=True)
-
 
         # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         # SECTION 3 — COMPANY RANKINGS

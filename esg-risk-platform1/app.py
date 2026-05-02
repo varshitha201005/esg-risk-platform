@@ -1485,7 +1485,7 @@ with tab5:
         company = filtered_df[filtered_df['company'] == selected_company].iloc[0]
         risk_color = get_risk_color(company['risk_label'])
 
-        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         # SECTION A — PROFILE CARD + RADAR
         # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         st.markdown("""
@@ -1495,7 +1495,6 @@ with tab5:
 
         col1, col2 = st.columns(2)
         with col1:
-            # rank within filtered_df
             rank = filtered_df['esg_score'].rank(ascending=False).loc[
                 filtered_df['company'] == selected_company
             ].values[0]
@@ -1548,16 +1547,22 @@ with tab5:
             </div>""", unsafe_allow_html=True)
 
         with col2:
+            risk_rgba_map = {
+                "#2ecc71": "rgba(46,204,113,0.13)",
+                "#f39c12": "rgba(243,156,18,0.13)",
+                "#e74c3c": "rgba(231,76,60,0.13)",
+            }
+            radar_fill = risk_rgba_map.get(risk_color, "rgba(100,100,100,0.13)")
+
             fig_radar = go.Figure(data=go.Scatterpolar(
                 r=[company['environmental_score'], company['social_score'],
                    company['governance_score']],
                 theta=['Environmental', 'Social', 'Governance'],
                 fill='toself',
                 line_color=risk_color,
-                fillcolor=f"{risk_color}22",
+                fillcolor=radar_fill,
                 name=selected_company
             ))
-            # dataset avg overlay
             fig_radar.add_trace(go.Scatterpolar(
                 r=[
                     round(filtered_df['environmental_score'].mean(), 1),
@@ -1584,7 +1589,6 @@ with tab5:
             st.plotly_chart(fig_radar, use_container_width=True)
 
         st.markdown("<hr style='border:1px solid #dce3ea;margin:8px 0 20px;'>", unsafe_allow_html=True)
-
         # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         # SECTION B — INVESTMENT RECOMMENDATION + SCORE BREAKDOWN
         # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

@@ -883,29 +883,65 @@ with tab4:
         col4.metric("F1 Score", f"{r['f1']:.2%}")
 
         st.markdown("### 🔲 Confusion Matrix")
-        fig_cm, ax = plt.subplots(figsize=(2,2))
-        sns.heatmap(
-            r['confusion_matrix'], annot=True, fmt='d', cmap='Blues', ax=ax,
-            xticklabels=["Low", "Medium", "High"],
-            yticklabels=["Low", "Medium", "High"]
-        )
-        ax.set_xlabel("Predicted")
-        ax.set_ylabel("Actual")
-        st.pyplot(fig_cm)
 
-        if selected_eval == "Random Forest":
-            st.markdown("### 🌟 Feature Importance")
-            importance_df = pd.DataFrame({
-                'Feature': ['environmental_score', 'social_score', 'governance_score'],
-                'Importance': r['model'].feature_importances_
-            }).sort_values('Importance', ascending=False)
-            fig_imp = px.bar(
-                importance_df, x='Feature', y='Importance',
-                title='Feature Importance', color='Importance',
-                color_continuous_scale='Greens'
-            )
-            st.plotly_chart(fig_imp, use_container_width=True)
+# Create a compact figure
+fig_cm, ax = plt.subplots(figsize=(1.6, 1.6))
 
+sns.heatmap(
+    r['confusion_matrix'],
+    annot=True,
+    fmt='d',
+    cmap='Blues',
+    cbar=False,                     # remove color bar to save space
+    square=True,                   # keep it perfectly square
+    linewidths=0.5,                # subtle grid lines
+    annot_kws={"size": 7, "weight": "bold"},
+    xticklabels=["L", "M", "H"],   # shorter labels
+    yticklabels=["L", "M", "H"],
+    ax=ax
+)
+
+# Minimal labels (small + clean)
+ax.set_xlabel("Pred", fontsize=7)
+ax.set_ylabel("Actual", fontsize=7)
+ax.tick_params(axis='both', labelsize=6)
+
+plt.tight_layout(pad=0.3)
+
+# Force smaller display width using columns
+col1, col2, col3 = st.columns([1, 1, 1])
+with col2:
+    st.pyplot(fig_cm, use_container_width=False)
+
+
+# ------------------ Feature Importance ------------------
+
+if selected_eval == "Random Forest":
+    st.markdown("### 🌟 Feature Importance")
+
+    importance_df = pd.DataFrame({
+        'Feature': ['Environmental', 'Social', 'Governance'],
+        'Importance': r['model'].feature_importances_
+    }).sort_values('Importance', ascending=False)
+
+    fig_imp = px.bar(
+        importance_df,
+        x='Feature',
+        y='Importance',
+        color='Importance',
+        color_continuous_scale='Greens'
+    )
+
+    # Clean, minimal layout
+    fig_imp.update_layout(
+        height=300,
+        margin=dict(l=10, r=10, t=30, b=10),
+        title="",
+        xaxis_title="",
+        yaxis_title="Importance"
+    )
+
+    st.plotly_chart(fig_imp, use_container_width=True)
 # ══════════════════════════════════════════════════════════════════════════════
 # TAB 5 — COMPANY INSIGHTS
 # ══════════════════════════════════════════════════════════════════════════════

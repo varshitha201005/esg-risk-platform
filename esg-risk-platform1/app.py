@@ -85,6 +85,21 @@ st.markdown("""
         background: linear-gradient(180deg, #1a3c5e 0%, #0d2137 100%);
     }
     [data-testid="stSidebar"] * { color: white !important; }
+    [data-testid="stSidebar"] .stFileUploader {
+        background: rgba(255,255,255,0.15);
+        border-radius: 8px;
+        padding: 10px;
+        border: 1px solid rgba(255,255,255,0.3);
+    }
+    [data-testid="stSidebar"] .stFileUploader button {
+        background: #2ecc71 !important;
+        color: white !important;
+        border-radius: 8px !important;
+        border: none !important;
+    }
+    [data-testid="stSidebar"] .stFileUploader label {
+        color: white !important;
+    }
     [data-testid="stSidebar"] .stSelectbox > div > div {
         background: rgba(255,255,255,0.1) !important;
         border: 1px solid rgba(255,255,255,0.2) !important;

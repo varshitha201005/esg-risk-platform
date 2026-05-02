@@ -585,7 +585,6 @@ except:
 else:
     st.sidebar.markdown("### 🌿 TripleLens")
 
-st.sidebar.title("TripleLens")
 st.sidebar.markdown(f"👤 Welcome, **{st.session_state.name}**!")
 st.sidebar.markdown("---")
 

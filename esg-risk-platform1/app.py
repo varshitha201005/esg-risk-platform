@@ -609,65 +609,10 @@ with tab1:
     else:
         RISK_COLORS = {"Low Risk": "#2ecc71", "Medium Risk": "#f39c12", "High Risk": "#e74c3c"}
 
-        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        # SECTION 1 — KPI SUMMARY CARDS
-        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        st.markdown("""
-        <div style='border-left:4px solid #2ecc71;padding:4px 0 4px 14px;margin-bottom:16px;'>
-            <span style='font-size:1.05rem;font-weight:600;color:#1a3c5e;'>📊 Key Performance Indicators</span>
-        </div>""", unsafe_allow_html=True)
 
-        avg_esg = round(filtered_df['esg_score'].mean(), 1)
-        low_count  = len(filtered_df[filtered_df['risk_label'] == 'Low Risk'])
-        med_count  = len(filtered_df[filtered_df['risk_label'] == 'Medium Risk'])
-        high_count = len(filtered_df[filtered_df['risk_label'] == 'High Risk'])
-
-        col1, col2, col3, col4, col5 = st.columns(5)
-        with col1:
-            st.markdown(f"""
-            <div style='background:linear-gradient(135deg,#1a3c5e,#2980b9);
-                        border-radius:14px;padding:20px;text-align:center;
-                        box-shadow:0 4px 15px rgba(0,0,0,0.1);'>
-                <p style='color:rgba(255,255,255,0.8);margin:0;font-size:0.85rem;'>Total Companies</p>
-                <h2 style='color:white;margin:5px 0;font-size:2rem;'>{len(filtered_df)}</h2>
-            </div>""", unsafe_allow_html=True)
-        with col2:
-            st.markdown(f"""
-            <div style='background:linear-gradient(135deg,#2ecc71,#27ae60);
-                        border-radius:14px;padding:20px;text-align:center;
-                        box-shadow:0 4px 15px rgba(0,0,0,0.1);'>
-                <p style='color:rgba(255,255,255,0.8);margin:0;font-size:0.85rem;'>✅ Low Risk</p>
-                <h2 style='color:white;margin:5px 0;font-size:2rem;'>{low_count}</h2>
-            </div>""", unsafe_allow_html=True)
-        with col3:
-            st.markdown(f"""
-            <div style='background:linear-gradient(135deg,#f39c12,#e67e22);
-                        border-radius:14px;padding:20px;text-align:center;
-                        box-shadow:0 4px 15px rgba(0,0,0,0.1);'>
-                <p style='color:rgba(255,255,255,0.8);margin:0;font-size:0.85rem;'>⚠️ Medium Risk</p>
-                <h2 style='color:white;margin:5px 0;font-size:2rem;'>{med_count}</h2>
-            </div>""", unsafe_allow_html=True)
-        with col4:
-            st.markdown(f"""
-            <div style='background:linear-gradient(135deg,#e74c3c,#c0392b);
-                        border-radius:14px;padding:20px;text-align:center;
-                        box-shadow:0 4px 15px rgba(0,0,0,0.1);'>
-                <p style='color:rgba(255,255,255,0.8);margin:0;font-size:0.85rem;'>🚨 High Risk</p>
-                <h2 style='color:white;margin:5px 0;font-size:2rem;'>{high_count}</h2>
-            </div>""", unsafe_allow_html=True)
-        with col5:
-            st.markdown(f"""
-            <div style='background:linear-gradient(135deg,#9b59b6,#8e44ad);
-                        border-radius:14px;padding:20px;text-align:center;
-                        box-shadow:0 4px 15px rgba(0,0,0,0.1);'>
-                <p style='color:rgba(255,255,255,0.8);margin:0;font-size:0.85rem;'>📊 Avg ESG Score</p>
-                <h2 style='color:white;margin:5px 0;font-size:2rem;'>{avg_esg}</h2>
-            </div>""", unsafe_allow_html=True)
-
-        st.markdown("<br>", unsafe_allow_html=True)
 
         # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        # SECTION 2 — RISK OVERVIEW
+        # SECTION 1 — RISK OVERVIEW
         # Left : Donut — what % of companies fall in each risk tier
         # Right: Grouped bar — avg E / S / G score per risk tier
         # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -724,7 +669,7 @@ with tab1:
         st.markdown("<hr style='border:1px solid #dce3ea;margin:8px 0 20px;'>", unsafe_allow_html=True)
 
         # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        # SECTION 3 — COMPANY RANKINGS
+        # SECTION 2 — COMPANY RANKINGS
         # Left : Horizontal bar — top 15 companies ranked by ESG score
         # Right: Box plot — ESG score spread within each risk tier
         # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -773,7 +718,7 @@ with tab1:
         st.markdown("<hr style='border:1px solid #dce3ea;margin:8px 0 20px;'>", unsafe_allow_html=True)
 
         # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        # SECTION 4 — ESG PILLAR DEEP-DIVE
+        # SECTION 3 — ESG PILLAR DEEP-DIVE
         # Left : Scatter — Environmental vs Social (size = ESG score)
         # Right: Grouped bar — avg E / S / G per company (top 10)
         # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -833,7 +778,7 @@ with tab1:
         st.markdown("<hr style='border:1px solid #dce3ea;margin:8px 0 20px;'>", unsafe_allow_html=True)
 
         # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        # SECTION 5 — PILLAR SCORE DISTRIBUTIONS
+        # SECTION 4 — PILLAR SCORE DISTRIBUTIONS
         # Three histograms with distinct axis labels and descriptions
         # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         st.markdown("""
@@ -885,7 +830,7 @@ with tab1:
         st.markdown("<hr style='border:1px solid #dce3ea;margin:8px 0 20px;'>", unsafe_allow_html=True)
 
         # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        # SECTION 6 — TOP 10 SAFEST INVESTMENTS TABLE
+        # SECTION 5 — TOP 10 SAFEST INVESTMENTS TABLE
         # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         st.markdown("""
         <div style='border-left:4px solid #e74c3c;padding:4px 0 4px 14px;margin-bottom:16px;'>
@@ -900,6 +845,63 @@ with tab1:
             top10.style.background_gradient(subset=['esg_score'], cmap='Greens'),
             use_container_width=True
         )
+
+        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        # SECTION 6 — KPI SUMMARY CARDS
+        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        st.markdown("""
+        <div style='border-left:4px solid #2ecc71;padding:4px 0 4px 14px;margin-bottom:16px;'>
+            <span style='font-size:1.05rem;font-weight:600;color:#1a3c5e;'>📊 Key Performance Indicators</span>
+        </div>""", unsafe_allow_html=True)
+
+        avg_esg = round(filtered_df['esg_score'].mean(), 1)
+        low_count  = len(filtered_df[filtered_df['risk_label'] == 'Low Risk'])
+        med_count  = len(filtered_df[filtered_df['risk_label'] == 'Medium Risk'])
+        high_count = len(filtered_df[filtered_df['risk_label'] == 'High Risk'])
+
+        col1, col2, col3, col4, col5 = st.columns(5)
+        with col1:
+            st.markdown(f"""
+            <div style='background:linear-gradient(135deg,#1a3c5e,#2980b9);
+                        border-radius:14px;padding:20px;text-align:center;
+                        box-shadow:0 4px 15px rgba(0,0,0,0.1);'>
+                <p style='color:rgba(255,255,255,0.8);margin:0;font-size:0.85rem;'>Total Companies</p>
+                <h2 style='color:white;margin:5px 0;font-size:2rem;'>{len(filtered_df)}</h2>
+            </div>""", unsafe_allow_html=True)
+        with col2:
+            st.markdown(f"""
+            <div style='background:linear-gradient(135deg,#2ecc71,#27ae60);
+                        border-radius:14px;padding:20px;text-align:center;
+                        box-shadow:0 4px 15px rgba(0,0,0,0.1);'>
+                <p style='color:rgba(255,255,255,0.8);margin:0;font-size:0.85rem;'>✅ Low Risk</p>
+                <h2 style='color:white;margin:5px 0;font-size:2rem;'>{low_count}</h2>
+            </div>""", unsafe_allow_html=True)
+        with col3:
+            st.markdown(f"""
+            <div style='background:linear-gradient(135deg,#f39c12,#e67e22);
+                        border-radius:14px;padding:20px;text-align:center;
+                        box-shadow:0 4px 15px rgba(0,0,0,0.1);'>
+                <p style='color:rgba(255,255,255,0.8);margin:0;font-size:0.85rem;'>⚠️ Medium Risk</p>
+                <h2 style='color:white;margin:5px 0;font-size:2rem;'>{med_count}</h2>
+            </div>""", unsafe_allow_html=True)
+        with col4:
+            st.markdown(f"""
+            <div style='background:linear-gradient(135deg,#e74c3c,#c0392b);
+                        border-radius:14px;padding:20px;text-align:center;
+                        box-shadow:0 4px 15px rgba(0,0,0,0.1);'>
+                <p style='color:rgba(255,255,255,0.8);margin:0;font-size:0.85rem;'>🚨 High Risk</p>
+                <h2 style='color:white;margin:5px 0;font-size:2rem;'>{high_count}</h2>
+            </div>""", unsafe_allow_html=True)
+        with col5:
+            st.markdown(f"""
+            <div style='background:linear-gradient(135deg,#9b59b6,#8e44ad);
+                        border-radius:14px;padding:20px;text-align:center;
+                        box-shadow:0 4px 15px rgba(0,0,0,0.1);'>
+                <p style='color:rgba(255,255,255,0.8);margin:0;font-size:0.85rem;'>📊 Avg ESG Score</p>
+                <h2 style='color:white;margin:5px 0;font-size:2rem;'>{avg_esg}</h2>
+            </div>""", unsafe_allow_html=True)
+
+        st.markdown("<br>", unsafe_allow_html=True)
 # ══════════════════════════════════════════════════════════════════════════════
 # TAB 2 — DATA PREVIEW
 # ══════════════════════════════════════════════════════════════════════════════

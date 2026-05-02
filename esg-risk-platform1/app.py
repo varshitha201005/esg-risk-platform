@@ -1639,48 +1639,10 @@ with tab4:
             st.markdown("<hr style='border:1px solid #dce3ea;margin:8px 0 20px;'>",
                         unsafe_allow_html=True)
 
-            # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-            # SECTION C — PER-CLASS METRICS (NEW)
-            # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-            st.markdown("""
-            <div style='border-left:4px solid #e67e22;padding:4px 0 4px 14px;margin-bottom:16px;'>
-                <span style='font-size:1rem;font-weight:600;color:#1a3c5e;'>
-                    🎯 Per-Class Performance Breakdown
-                </span>
-            </div>""", unsafe_allow_html=True)
 
-            class_labels = ["Low Risk","Medium Risk","High Risk"]
-            n_classes    = len(r['per_class_p'])
-            class_labels = class_labels[:n_classes]
-
-            per_class_df = pd.DataFrame({
-                "Risk Class": class_labels,
-                "Precision":  [round(float(v),3) for v in r['per_class_p']],
-                "Recall":     [round(float(v),3) for v in r['per_class_r']],
-                "F1 Score":   [round(float(v),3) for v in r['per_class_f']],
-            })
-            fig_pc = px.bar(
-                per_class_df.melt(id_vars='Risk Class',
-                                  var_name='Metric', value_name='Score'),
-                x='Risk Class', y='Score', color='Metric',
-                barmode='group', text_auto='.2f',
-                title=f'Per-Class Metrics — {selected_eval}',
-                color_discrete_sequence=['#2980b9','#9b59b6','#e67e22']
-            )
-            fig_pc.update_traces(textposition='outside', textfont_size=11)
-            fig_pc.update_layout(
-                paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
-                yaxis=dict(range=[0,1.2], gridcolor='rgba(0,0,0,0.05)',
-                           title='Score'),
-                xaxis_title='', legend_title='Metric', title_font_size=15
-            )
-            st.plotly_chart(fig_pc, use_container_width=True)
-
-            st.markdown("<hr style='border:1px solid #dce3ea;margin:8px 0 20px;'>",
-                        unsafe_allow_html=True)
 
             # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-            # SECTION D — ALL-MODELS COMPARISON + LEADERBOARD
+            # SECTION C — ALL-MODELS COMPARISON + LEADERBOARD
             # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
             st.markdown("""
             <div style='border-left:4px solid #1a3c5e;padding:4px 0 4px 14px;margin-bottom:16px;'>

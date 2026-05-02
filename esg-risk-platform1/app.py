@@ -28,113 +28,188 @@ st.set_page_config(
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    /* ── Global ── */
     * { font-family: 'Inter', sans-serif; }
-    .main { background-color: #f0f4f8; }
-    .block-container { padding-top: 1rem; padding-bottom: 2rem; }
+
+    /* ── Page background: deep gradient ── */
+    .stApp {
+        background: linear-gradient(135deg, #0f2027 0%, #203a43 45%, #0f3460 100%) !important;
+        min-height: 100vh;
+    }
+    .main { background: transparent !important; }
+    .block-container { padding-top: 1.5rem; padding-bottom: 2rem; }
+
+    /* ── Glassmorphism base card ── */
+    .glass-card {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 18px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    /* ── Buttons ── */
     .stButton>button {
-        background: linear-gradient(135deg, #1a3c5e, #2ecc71);
-        color: white !important;
-        border: none;
-        border-radius: 10px;
+        background: rgba(46, 204, 113, 0.25) !important;
+        color: #a8ffcb !important;
+        border: 1px solid rgba(46, 204, 113, 0.5) !important;
+        border-radius: 12px;
         padding: 12px 24px;
         font-size: 1rem;
         font-weight: 600;
         letter-spacing: 0.5px;
         transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+        backdrop-filter: blur(8px);
     }
     .stButton>button:hover {
+        background: rgba(46, 204, 113, 0.4) !important;
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(46, 204, 113, 0.4);
+        box-shadow: 0 6px 24px rgba(46, 204, 113, 0.35);
     }
+
+    /* ── Metric cards ── */
     [data-testid="stMetricValue"] {
         font-size: 2.2rem !important;
         font-weight: 700 !important;
-        color: #1a3c5e !important;
+        color: #a8ffcb !important;
     }
     [data-testid="stMetricLabel"] {
         font-size: 0.9rem !important;
         font-weight: 500 !important;
-        color: #666 !important;
+        color: rgba(255,255,255,0.65) !important;
     }
     [data-testid="metric-container"] {
-        background: white;
-        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.08) !important;
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        border-radius: 16px !important;
         padding: 20px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-        border-left: 4px solid #2ecc71;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+        border-left: 3px solid rgba(46, 204, 113, 0.7) !important;
     }
+
+    /* ── Tabs ── */
     .stTabs [data-baseweb="tab-list"] {
         gap: 8px;
-        background: white;
+        background: rgba(255, 255, 255, 0.07);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
         padding: 8px;
-        border-radius: 12px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+        border-radius: 14px;
+        border: 1px solid rgba(255,255,255,0.12);
     }
     .stTabs [data-baseweb="tab"] {
-        border-radius: 8px;
+        border-radius: 10px;
         padding: 8px 16px;
         font-weight: 500;
-        color: #666;
+        color: rgba(255,255,255,0.65) !important;
+        background: transparent !important;
     }
     .stTabs [aria-selected="true"] {
-        background: linear-gradient(135deg, #1a3c5e, #2ecc71) !important;
-        color: white !important;
+        background: rgba(46, 204, 113, 0.25) !important;
+        color: #a8ffcb !important;
+        border: 1px solid rgba(46, 204, 113, 0.4) !important;
     }
+
+    /* ── Sidebar ── */
     [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #1a3c5e 0%, #0d2137 100%);
+        background: rgba(10, 25, 47, 0.75) !important;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-right: 1px solid rgba(255,255,255,0.1) !important;
     }
-    [data-testid="stSidebar"] * { color: white !important; }
+    [data-testid="stSidebar"] * { color: rgba(255,255,255,0.9) !important; }
     [data-testid="stSidebar"] .stFileUploader {
-        background: rgba(255,255,255,0.15);
-        border-radius: 8px;
+        background: rgba(255,255,255,0.07);
+        border-radius: 10px;
         padding: 10px;
-        border: 1px solid rgba(255,255,255,0.3);
+        border: 1px solid rgba(255,255,255,0.2);
     }
     [data-testid="stSidebar"] .stFileUploader button {
-        background: #2ecc71 !important;
-        color: white !important;
+        background: rgba(46,204,113,0.3) !important;
+        color: #a8ffcb !important;
         border-radius: 8px !important;
-        border: none !important;
-    }
-    [data-testid="stSidebar"] .stFileUploader label {
-        color: white !important;
+        border: 1px solid rgba(46,204,113,0.5) !important;
     }
     [data-testid="stSidebar"] .stSelectbox > div > div {
-        background: rgba(255,255,255,0.1) !important;
+        background: rgba(255,255,255,0.08) !important;
         border: 1px solid rgba(255,255,255,0.2) !important;
         color: white !important;
-        border-radius: 8px;
+        border-radius: 10px;
     }
+
+    /* ── Main header ── */
     .main-header {
-        background: linear-gradient(135deg, #1a3c5e 0%, #2ecc71 100%);
+        background: rgba(255, 255, 255, 0.07);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
         padding: 30px 40px;
-        border-radius: 16px;
+        border-radius: 20px;
         margin-bottom: 24px;
         color: white;
-        box-shadow: 0 8px 30px rgba(26, 60, 94, 0.3);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        position: relative;
+        overflow: hidden;
     }
+    .main-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, rgba(46,204,113,0.15) 0%, transparent 70%);
+        pointer-events: none;
+    }
+
+    /* ── Auth pages ── */
     .auth-container {
         max-width: 450px;
         margin: auto;
-        background: white;
-        border-radius: 20px;
+        background: rgba(255,255,255,0.07);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255,255,255,0.15);
+        border-radius: 24px;
         padding: 40px;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        box-shadow: 0 16px 48px rgba(0,0,0,0.35);
     }
-    .auth-header {
-        text-align: center;
-        margin-bottom: 30px;
+    .auth-header { text-align: center; margin-bottom: 30px; }
+    .auth-header h1 { color: #a8ffcb; font-size: 1.8rem; font-weight: 700; }
+    .auth-header p { color: rgba(255,255,255,0.6); font-size: 0.95rem; }
+
+    /* ── Text inputs on glass background ── */
+    .stTextInput > div > div > input,
+    .stTextArea textarea {
+        background: rgba(255,255,255,0.08) !important;
+        border: 1px solid rgba(255,255,255,0.2) !important;
+        border-radius: 10px !important;
+        color: white !important;
     }
-    .auth-header h1 {
-        color: #1a3c5e;
-        font-size: 1.8rem;
-        font-weight: 700;
-    }
-    .auth-header p {
-        color: #666;
-        font-size: 0.95rem;
-    }
+    .stTextInput > div > div > input::placeholder { color: rgba(255,255,255,0.35) !important; }
+    .stTextInput label, .stTextArea label { color: rgba(255,255,255,0.8) !important; }
+
+    /* ── Dataframe / tables ── */
+    .stDataFrame { border-radius: 14px; overflow: hidden; }
+
+    /* ── Slider ── */
+    .stSlider label { color: rgba(255,255,255,0.8) !important; }
+
+    /* ── General text ── */
+    h1, h2, h3, h4, h5, p, label, span, div { color: rgba(255,255,255,0.92); }
+    .stMarkdown h3 { color: #a8ffcb !important; }
+
+    /* ── Divider ── */
+    hr { border-color: rgba(255,255,255,0.1) !important; }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -193,18 +268,21 @@ if 'auth_page' not in st.session_state:
 def show_login():
     st.markdown("""
     <div style='text-align:center; padding: 40px 0 20px 0;'>
-        <h1 style='color:#1a3c5e; font-size:2.5rem; font-weight:700;'>🌿 TripleLens</h1>
-        <p style='color:#666; font-size:1.1rem;'>ESG Risk Analysis Platform</p>
+        <h1 style='color:#a8ffcb; font-size:2.5rem; font-weight:700; text-shadow: 0 0 30px rgba(46,204,113,0.4);'>🌿 TripleLens</h1>
+        <p style='color:rgba(255,255,255,0.6); font-size:1.1rem;'>ESG Risk Analysis Platform</p>
     </div>
     """, unsafe_allow_html=True)
 
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
         st.markdown("""
-        <div style='background:white; border-radius:20px; padding:40px;
-                    box-shadow: 0 10px 40px rgba(0,0,0,0.1);'>
-            <h2 style='color:#1a3c5e; text-align:center; margin-bottom:5px;'>Welcome Back!</h2>
-            <p style='color:#666; text-align:center; margin-bottom:25px;'>Login to your account</p>
+        <div style='background:rgba(255,255,255,0.07); backdrop-filter:blur(20px);
+                    -webkit-backdrop-filter:blur(20px);
+                    border:1px solid rgba(255,255,255,0.15);
+                    border-radius:24px; padding:32px 40px;
+                    box-shadow: 0 16px 48px rgba(0,0,0,0.35);'>
+            <h2 style='color:#a8ffcb; text-align:center; margin-bottom:5px;'>Welcome Back!</h2>
+            <p style='color:rgba(255,255,255,0.55); text-align:center; margin-bottom:25px;'>Login to your account</p>
         </div>
         """, unsafe_allow_html=True)
 
@@ -234,18 +312,21 @@ def show_login():
 def show_register():
     st.markdown("""
     <div style='text-align:center; padding: 40px 0 20px 0;'>
-        <h1 style='color:#1a3c5e; font-size:2.5rem; font-weight:700;'>🌿 TripleLens</h1>
-        <p style='color:#666; font-size:1.1rem;'>ESG Risk Analysis Platform</p>
+        <h1 style='color:#a8ffcb; font-size:2.5rem; font-weight:700; text-shadow: 0 0 30px rgba(46,204,113,0.4);'>🌿 TripleLens</h1>
+        <p style='color:rgba(255,255,255,0.6); font-size:1.1rem;'>ESG Risk Analysis Platform</p>
     </div>
     """, unsafe_allow_html=True)
 
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
         st.markdown("""
-        <div style='background:white; border-radius:20px; padding:40px;
-                    box-shadow: 0 10px 40px rgba(0,0,0,0.1);'>
-            <h2 style='color:#1a3c5e; text-align:center; margin-bottom:5px;'>Create Account</h2>
-            <p style='color:#666; text-align:center; margin-bottom:25px;'>Join TripleLens today</p>
+        <div style='background:rgba(255,255,255,0.07); backdrop-filter:blur(20px);
+                    -webkit-backdrop-filter:blur(20px);
+                    border:1px solid rgba(255,255,255,0.15);
+                    border-radius:24px; padding:32px 40px;
+                    box-shadow: 0 16px 48px rgba(0,0,0,0.35);'>
+            <h2 style='color:#a8ffcb; text-align:center; margin-bottom:5px;'>Create Account</h2>
+            <p style='color:rgba(255,255,255,0.55); text-align:center; margin-bottom:25px;'>Join TripleLens today</p>
         </div>
         """, unsafe_allow_html=True)
 
@@ -612,44 +693,54 @@ with tab1:
         col1, col2, col3, col4, col5 = st.columns(5)
         with col1:
             st.markdown(f"""
-            <div style='background:linear-gradient(135deg,#1a3c5e,#2980b9);
-                        border-radius:14px;padding:20px;text-align:center;
-                        box-shadow:0 4px 15px rgba(0,0,0,0.1);'>
-                <p style='color:rgba(255,255,255,0.8);margin:0;font-size:0.85rem;'>Total Companies</p>
+            <div style='background:rgba(41,128,185,0.2); backdrop-filter:blur(16px);
+                        -webkit-backdrop-filter:blur(16px);
+                        border:1px solid rgba(41,128,185,0.4);
+                        border-radius:16px;padding:20px;text-align:center;
+                        box-shadow:0 8px 32px rgba(0,0,0,0.2);'>
+                <p style='color:rgba(255,255,255,0.7);margin:0;font-size:0.85rem;'>Total Companies</p>
                 <h2 style='color:white;margin:5px 0;font-size:2rem;'>{len(filtered_df)}</h2>
             </div>""", unsafe_allow_html=True)
         with col2:
             st.markdown(f"""
-            <div style='background:linear-gradient(135deg,#2ecc71,#27ae60);
-                        border-radius:14px;padding:20px;text-align:center;
-                        box-shadow:0 4px 15px rgba(0,0,0,0.1);'>
-                <p style='color:rgba(255,255,255,0.8);margin:0;font-size:0.85rem;'>✅ Low Risk</p>
-                <h2 style='color:white;margin:5px 0;font-size:2rem;'>{len(filtered_df[filtered_df['risk_label']=='Low Risk'])}</h2>
+            <div style='background:rgba(46,204,113,0.2); backdrop-filter:blur(16px);
+                        -webkit-backdrop-filter:blur(16px);
+                        border:1px solid rgba(46,204,113,0.4);
+                        border-radius:16px;padding:20px;text-align:center;
+                        box-shadow:0 8px 32px rgba(0,0,0,0.2);'>
+                <p style='color:rgba(255,255,255,0.7);margin:0;font-size:0.85rem;'>✅ Low Risk</p>
+                <h2 style='color:#a8ffcb;margin:5px 0;font-size:2rem;'>{len(filtered_df[filtered_df['risk_label']=='Low Risk'])}</h2>
             </div>""", unsafe_allow_html=True)
         with col3:
             st.markdown(f"""
-            <div style='background:linear-gradient(135deg,#f39c12,#e67e22);
-                        border-radius:14px;padding:20px;text-align:center;
-                        box-shadow:0 4px 15px rgba(0,0,0,0.1);'>
-                <p style='color:rgba(255,255,255,0.8);margin:0;font-size:0.85rem;'>⚠️ Medium Risk</p>
-                <h2 style='color:white;margin:5px 0;font-size:2rem;'>{len(filtered_df[filtered_df['risk_label']=='Medium Risk'])}</h2>
+            <div style='background:rgba(243,156,18,0.2); backdrop-filter:blur(16px);
+                        -webkit-backdrop-filter:blur(16px);
+                        border:1px solid rgba(243,156,18,0.4);
+                        border-radius:16px;padding:20px;text-align:center;
+                        box-shadow:0 8px 32px rgba(0,0,0,0.2);'>
+                <p style='color:rgba(255,255,255,0.7);margin:0;font-size:0.85rem;'>⚠️ Medium Risk</p>
+                <h2 style='color:#ffd89b;margin:5px 0;font-size:2rem;'>{len(filtered_df[filtered_df['risk_label']=='Medium Risk'])}</h2>
             </div>""", unsafe_allow_html=True)
         with col4:
             st.markdown(f"""
-            <div style='background:linear-gradient(135deg,#e74c3c,#c0392b);
-                        border-radius:14px;padding:20px;text-align:center;
-                        box-shadow:0 4px 15px rgba(0,0,0,0.1);'>
-                <p style='color:rgba(255,255,255,0.8);margin:0;font-size:0.85rem;'>🚨 High Risk</p>
-                <h2 style='color:white;margin:5px 0;font-size:2rem;'>{len(filtered_df[filtered_df['risk_label']=='High Risk'])}</h2>
+            <div style='background:rgba(231,76,60,0.2); backdrop-filter:blur(16px);
+                        -webkit-backdrop-filter:blur(16px);
+                        border:1px solid rgba(231,76,60,0.4);
+                        border-radius:16px;padding:20px;text-align:center;
+                        box-shadow:0 8px 32px rgba(0,0,0,0.2);'>
+                <p style='color:rgba(255,255,255,0.7);margin:0;font-size:0.85rem;'>🚨 High Risk</p>
+                <h2 style='color:#ffb3b3;margin:5px 0;font-size:2rem;'>{len(filtered_df[filtered_df['risk_label']=='High Risk'])}</h2>
             </div>""", unsafe_allow_html=True)
         with col5:
             avg_esg = round(filtered_df['esg_score'].mean(), 1)
             st.markdown(f"""
-            <div style='background:linear-gradient(135deg,#9b59b6,#8e44ad);
-                        border-radius:14px;padding:20px;text-align:center;
-                        box-shadow:0 4px 15px rgba(0,0,0,0.1);'>
-                <p style='color:rgba(255,255,255,0.8);margin:0;font-size:0.85rem;'>📊 Avg ESG Score</p>
-                <h2 style='color:white;margin:5px 0;font-size:2rem;'>{avg_esg}</h2>
+            <div style='background:rgba(155,89,182,0.2); backdrop-filter:blur(16px);
+                        -webkit-backdrop-filter:blur(16px);
+                        border:1px solid rgba(155,89,182,0.4);
+                        border-radius:16px;padding:20px;text-align:center;
+                        box-shadow:0 8px 32px rgba(0,0,0,0.2);'>
+                <p style='color:rgba(255,255,255,0.7);margin:0;font-size:0.85rem;'>📊 Avg ESG Score</p>
+                <h2 style='color:#e8c6ff;margin:5px 0;font-size:2rem;'>{avg_esg}</h2>
             </div>""", unsafe_allow_html=True)
 
         st.markdown("<br>", unsafe_allow_html=True)
@@ -853,12 +944,15 @@ with tab3:
             esg = round((env * 0.4) + (soc * 0.3) + (gov * 0.3), 1)
             color = get_risk_color(predicted_risk)
             st.markdown(f"""
-            <div style='background:white; border-radius:12px; padding:25px;
-                        text-align:center; border-top: 5px solid {color};
-                        box-shadow: 0 2px 10px rgba(0,0,0,0.08);'>
+            <div style='background:rgba(255,255,255,0.08); backdrop-filter:blur(16px);
+                        -webkit-backdrop-filter:blur(16px);
+                        border:1px solid rgba(255,255,255,0.15);
+                        border-radius:16px; padding:25px;
+                        text-align:center; border-top: 4px solid {color};
+                        box-shadow: 0 8px 32px rgba(0,0,0,0.25);'>
                 <h2 style='color:{color}'>{predicted_risk}</h2>
-                <p style='font-size:1.1rem'>Overall ESG Score: <strong>{esg} / 100</strong></p>
-                <p>Model used: <strong>{selected_model}</strong></p>
+                <p style='font-size:1.1rem; color:rgba(255,255,255,0.85);'>Overall ESG Score: <strong>{esg} / 100</strong></p>
+                <p style='color:rgba(255,255,255,0.6);'>Model used: <strong style="color:rgba(255,255,255,0.85);">{selected_model}</strong></p>
             </div>
             """, unsafe_allow_html=True)
 
@@ -911,16 +1005,19 @@ with tab5:
         col1, col2 = st.columns(2)
         with col1:
             st.markdown(f"""
-            <div style='background:white; border-radius:12px; padding:25px;
-                        border-top: 5px solid {risk_color};
-                        box-shadow: 0 2px 10px rgba(0,0,0,0.08);'>
-                <h2>{company['company']}</h2>
+            <div style='background:rgba(255,255,255,0.08); backdrop-filter:blur(16px);
+                        -webkit-backdrop-filter:blur(16px);
+                        border:1px solid rgba(255,255,255,0.15);
+                        border-radius:18px; padding:25px;
+                        border-top: 4px solid {risk_color};
+                        box-shadow: 0 8px 32px rgba(0,0,0,0.25);'>
+                <h2 style='color:white;'>{company['company']}</h2>
                 <h3 style='color:{risk_color}'>{company['risk_label']}</h3>
-                <p style='font-size:1.1rem'>Overall ESG Score: <strong>{company['esg_score']} / 100</strong></p>
-                <hr/>
-                <p>🌱 Environmental Score: <strong>{round(company['environmental_score'], 1)}</strong></p>
-                <p>🤝 Social Score: <strong>{round(company['social_score'], 1)}</strong></p>
-                <p>🏛️ Governance Score: <strong>{round(company['governance_score'], 1)}</strong></p>
+                <p style='font-size:1.1rem; color:rgba(255,255,255,0.85);'>Overall ESG Score: <strong>{company['esg_score']} / 100</strong></p>
+                <hr style='border-color:rgba(255,255,255,0.15);'/>
+                <p style='color:rgba(255,255,255,0.8);'>🌱 Environmental Score: <strong>{round(company['environmental_score'], 1)}</strong></p>
+                <p style='color:rgba(255,255,255,0.8);'>🤝 Social Score: <strong>{round(company['social_score'], 1)}</strong></p>
+                <p style='color:rgba(255,255,255,0.8);'>🏛️ Governance Score: <strong>{round(company['governance_score'], 1)}</strong></p>
             </div>
             """, unsafe_allow_html=True)
         with col2:
@@ -930,8 +1027,15 @@ with tab5:
                 fill='toself', line_color=risk_color
             ))
             fig_radar.update_layout(
-                polar=dict(radialaxis=dict(visible=True, range=[0, 100])),
-                title=f"{company['company']} ESG Radar Chart"
+                paper_bgcolor='rgba(0,0,0,0)',
+                plot_bgcolor='rgba(0,0,0,0)',
+                polar=dict(
+                    bgcolor='rgba(255,255,255,0.05)',
+                    radialaxis=dict(visible=True, range=[0, 100], color='rgba(255,255,255,0.5)'),
+                    angularaxis=dict(color='rgba(255,255,255,0.5)')
+                ),
+                font=dict(color='rgba(255,255,255,0.85)'),
+                title=dict(text=f"{company['company']} ESG Radar Chart", font=dict(color='rgba(255,255,255,0.9)'))
             )
             st.plotly_chart(fig_radar, use_container_width=True)
 
@@ -951,7 +1055,16 @@ with tab5:
         })
         fig_scores = px.bar(
             score_df, x='Category', y='Score', color='Category',
-            title='Category Score Breakdown', text='Weighted Score'
+            title='Category Score Breakdown', text='Weighted Score',
+            color_discrete_sequence=['#2ecc71', '#3498db', '#9b59b6']
+        )
+        fig_scores.update_layout(
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
+            font=dict(color='rgba(255,255,255,0.85)'),
+            title_font=dict(color='rgba(255,255,255,0.9)'),
+            xaxis=dict(color='rgba(255,255,255,0.6)'),
+            yaxis=dict(color='rgba(255,255,255,0.6)', gridcolor='rgba(255,255,255,0.1)')
         )
         st.plotly_chart(fig_scores, use_container_width=True)
 

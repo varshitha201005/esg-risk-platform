@@ -882,33 +882,72 @@ with tab4:
         col3.metric("Recall", f"{r['recall']:.2%}")
         col4.metric("F1 Score", f"{r['f1']:.2%}")
 
-    st.markdown("### Confusion Matrix")
+st.markdown("### 🔲 Confusion Analysis")
 
-fig_cm, ax = plt.subplots(figsize=(2.5, 2.2))
+cm = r['confusion_matrix']
+total = cm.sum()
+correct = cm.trace()
+accuracy = correct / total
+errors = total - correct
 
-sns.heatmap(
-    r['confusion_matrix'],
-    annot=True,
-    fmt='d',
-    cmap='Blues',
-    cbar=False,
-    square=True,
-    linewidths=0.2,
-    annot_kws={"size": 9},
-    xticklabels=["L", "M", "H"],
-    yticklabels=["L", "M", "H"],
-    ax=ax
-)
+class_names = ["Low", "Medium", "High"]
+class_acc = cm.diagonal() / cm.sum(axis=1)
 
-ax.set_xlabel("")
-ax.set_ylabel("")
-ax.tick_params(length=0)
+# Layout split
+col_left, col_right = st.columns([1, 2])
 
-for spine in ax.spines.values():
-    spine.set_visible(False)
+# ---------------- LEFT: Compact Matrix ----------------
+with col_left:
+    import matplotlib.pyplot as plt
+    import seaborn as sns
 
-plt.tight_layout()
-st.pyplot(fig_cm)
+    fig_cm, ax = plt.subplots(figsize=(2.2, 2))
+
+    sns.heatmap(
+        cm,
+        annot=True,
+        fmt='d',
+        cmap='Blues',
+        cbar=False,
+        square=True,
+        linewidths=0.5,
+        annot_kws={"size": 9, "weight": "bold"},
+        xticklabels=["L", "M", "H"],
+        yticklabels=["L", "M", "H"],
+        ax=ax
+    )
+
+    ax.set_xlabel("")
+    ax.set_ylabel("")
+    ax.tick_params(length=0, labelsize=8)
+
+    for spine in ax.spines.values():
+        spine.set_visible(False)
+
+    plt.tight_layout(pad=0.5)
+
+    st.pyplot(fig_cm)
+
+# ---------------- RIGHT: Insights ----------------
+with col_right:
+    c1, c2, c3 = st.columns(3)
+
+    c1.metric("✅ Correct", f"{correct}", f"{accuracy:.1%}")
+    c2.metric("📊 Total", f"{total}")
+    c3.metric("❌ Errors", f"{errors}", f"{(1-accuracy):.1%}")
+
+    st.progress(float(accuracy))
+
+    st.markdown("#### 📌 Class-wise Accuracy")
+
+    cols = st.columns(3)
+    for i, col in enumerate(cols):
+        with col:
+            st.metric(
+                label=class_names[i],
+                value=f"{class_acc[i]:.1%}",
+                delta=f"{cm[i][i]} correct"
+            )
 # ══════════════════════════════════════════════════════════════════════════════
 # TAB 5 — COMPANY INSIGHTS
 # ══════════════════════════════════════════════════════════════════════════════

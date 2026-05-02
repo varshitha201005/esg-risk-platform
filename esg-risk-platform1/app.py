@@ -1307,19 +1307,6 @@ with tab3:
                 gov = st.slider("🏛️ Governance Score", 0, 100,
                                 st.session_state.pred_gov, key='pred_gov')
 
-            live_esg   = round((env*0.4)+(soc*0.3)+(gov*0.3), 1)
-            live_risk  = get_risk_label(live_esg, low_thresh, high_thresh)
-            live_color = get_risk_color(live_risk)
-            st.markdown(f"""
-            <div style='background:white;border-radius:12px;padding:12px 20px;
-                        margin:10px 0;border-left:4px solid {live_color};
-                        box-shadow:0 2px 8px rgba(0,0,0,0.06);'>
-                <span style='color:#666;font-size:0.9rem;'>Live Preview → </span>
-                <span style='color:{live_color};font-weight:700;'>{live_risk}</span>
-                <span style='color:#1a3c5e;font-size:0.9rem;margin-left:12px;'>
-                    ESG Score: <strong>{live_esg}</strong>
-                </span>
-            </div>""", unsafe_allow_html=True)
 
             if st.button("🔮 Predict Risk Level"):
                 model      = results[selected_model]['model']

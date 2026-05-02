@@ -1060,7 +1060,7 @@ with tab4:
             ("🎯 Accuracy",  r['accuracy'],  "#2ecc71", "Overall correct predictions"),
             ("🔍 Precision", r['precision'], "#2980b9", "Positive prediction accuracy"),
             ("📡 Recall",    r['recall'],    "#9b59b6", "True positive detection rate"),
-            ("⚖️ F1 Score",  r['f1'],        "#e67e22", "Harmonic mean of Precision & Recall"),
+            ("⚖️ F1 Score",  r['f1'],        "#e67e22", "Harmonic mean of P & R"),
         ]
 
         cols = st.columns(4)

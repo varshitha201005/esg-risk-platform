@@ -25,24 +25,150 @@ st.set_page_config(
 # ─── Custom CSS ────────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    * { font-family: 'Inter', sans-serif; }
     .main { background-color: #f0f4f8; }
-    .block-container { padding-top: 2rem; }
+    .block-container { padding-top: 1rem; padding-bottom: 2rem; }
+
+    /* Buttons */
     .stButton>button {
         background: linear-gradient(135deg, #1a3c5e, #2ecc71);
-        color: white;
+        color: white !important;
         border: none;
-        border-radius: 8px;
-        padding: 10px 20px;
+        border-radius: 10px;
+        padding: 12px 24px;
         font-size: 1rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
     }
-    .login-box {
-        max-width: 400px;
-        margin: auto;
-        padding: 30px;
+    .stButton>button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(46, 204, 113, 0.4);
+    }
+
+    /* Metrics */
+    [data-testid="stMetricValue"] {
+        font-size: 2.2rem !important;
+        font-weight: 700 !important;
+        color: #1a3c5e !important;
+    }
+    [data-testid="stMetricLabel"] {
+        font-size: 0.9rem !important;
+        font-weight: 500 !important;
+        color: #666 !important;
+    }
+    [data-testid="metric-container"] {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+        border-left: 4px solid #2ecc71;
+    }
+
+    /* Tabs */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 8px;
+        background: white;
+        padding: 8px;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    }
+    .stTabs [data-baseweb="tab"] {
+        border-radius: 8px;
+        padding: 8px 16px;
+        font-weight: 500;
+        color: #666;
+    }
+    .stTabs [aria-selected="true"] {
+        background: linear-gradient(135deg, #1a3c5e, #2ecc71) !important;
+        color: white !important;
+    }
+
+    /* Sidebar */
+    [data-testid="stSidebar"] {
+        background: linear-gradient(180deg, #1a3c5e 0%, #0d2137 100%);
+    }
+    [data-testid="stSidebar"] * {
+        color: white !important;
+    }
+    [data-testid="stSidebar"] .stSelectbox > div > div {
+        background: rgba(255,255,255,0.1) !important;
+        border: 1px solid rgba(255,255,255,0.2) !important;
+        color: white !important;
+        border-radius: 8px;
+    }
+    [data-testid="stSidebar"] .stFileUploader {
+        background: rgba(255,255,255,0.1);
+        border-radius: 8px;
+        padding: 10px;
+    }
+
+    /* Cards */
+    .custom-card {
         background: white;
         border-radius: 16px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        padding: 24px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        margin-bottom: 16px;
+        transition: transform 0.2s ease;
     }
+    .custom-card:hover {
+        transform: translateY(-4px);
+    }
+
+    /* Header */
+    .main-header {
+        background: linear-gradient(135deg, #1a3c5e 0%, #2ecc71 100%);
+        padding: 30px 40px;
+        border-radius: 16px;
+        margin-bottom: 24px;
+        color: white;
+        box-shadow: 0 8px 30px rgba(26, 60, 94, 0.3);
+    }
+
+    /* Dataframe */
+    [data-testid="stDataFrame"] {
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    }
+
+    /* Input fields */
+    .stTextInput > div > div > input {
+        border-radius: 8px;
+        border: 2px solid #e0e0e0;
+        padding: 10px 16px;
+    }
+    .stTextInput > div > div > input:focus {
+        border-color: #2ecc71;
+        box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.1);
+    }
+
+    /* Slider */
+    .stSlider > div > div > div > div {
+        background: linear-gradient(135deg, #1a3c5e, #2ecc71) !important;
+    }
+
+    /* Success/Warning/Error boxes */
+    .stSuccess {
+        border-radius: 10px;
+        border-left: 4px solid #2ecc71;
+    }
+    .stWarning {
+        border-radius: 10px;
+        border-left: 4px solid #f39c12;
+    }
+    .stError {
+        border-radius: 10px;
+        border-left: 4px solid #e74c3c;
+    }
+
+    /* Hide streamlit branding */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
 </style>
 """, unsafe_allow_html=True)
 
@@ -388,8 +514,12 @@ if os.path.exists(logo_path):
     ]
 
     # ─── Header ──────────────────────────────────────────────────────────────
-    st.markdown("## TripleLens - ESG Risk Analysis Platform")
-    st.markdown("Analyze companies based on Environmental, Social, and Governance data using Machine Learning.")
+    st.markdown("""
+<div class='main-header'>
+    <h1 style='margin:0; font-size:2rem; font-weight:700;'>🌿 TripleLens</h1>
+    <p style='margin:5px 0 0 0; opacity:0.85; font-size:1.1rem;'>ESG Risk Analysis Platform — Insight. Impact. Integrity.</p>
+</div>
+""", unsafe_allow_html=True)
     if len(risk_filter) < 3:
         st.info(f"🔍 Filtering by: **{', '.join(risk_filter)}** | ESG Score: **{score_min} – {score_max}**")
     st.markdown("---")

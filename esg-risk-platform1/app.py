@@ -1722,32 +1722,6 @@ with tab5:
             )
             st.plotly_chart(fig_peer, use_container_width=True)
 
-            # peer scatter — E vs G, highlight selected
-            peers['is_selected'] = peers['company'] == selected_company
-            fig_peer_scatter = px.scatter(
-                peers,
-                x='environmental_score', y='governance_score',
-                size='esg_score', color='is_selected',
-                color_discrete_map={True: risk_color, False: 'rgba(180,180,180,0.6)'},
-                hover_name='company',
-                hover_data={'social_score': True, 'esg_score': True,
-                            'is_selected': False},
-                title=f"Peer Scatter — Environmental vs Governance<br>"
-                      f"<sup>Highlighted: {selected_company}</sup>",
-                labels={
-                    'environmental_score': 'Environmental Score',
-                    'governance_score':    'Governance Score'
-                }
-            )
-            fig_peer_scatter.update_layout(
-                paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
-                xaxis=dict(range=[0, 110], gridcolor='rgba(0,0,0,0.05)'),
-                yaxis=dict(range=[0, 110], gridcolor='rgba(0,0,0,0.05)'),
-                showlegend=False, title_font_size=15
-            )
-            st.plotly_chart(fig_peer_scatter, use_container_width=True)
-
-        st.markdown("<hr style='border:1px solid #dce3ea;margin:8px 0 20px;'>", unsafe_allow_html=True)
 # ══════════════════════════════════════════════════════════════════════════════
 # TAB 6 — EXPORT REPORT
 # ══════════════════════════════════════════════════════════════════════════════

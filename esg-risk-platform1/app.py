@@ -792,8 +792,8 @@ with tab1:
             risk_counts = (
                 filtered_df['risk_label']
                 .value_counts()
-                .reset_index()
-                .rename(columns={'index': 'risk_label', 'risk_label': 'count'})
+                .rename_axis('risk_label')
+                .reset_index(name='count')
             )
             fig_donut = px.pie(
                 risk_counts,
@@ -810,8 +810,7 @@ with tab1:
                 hovertemplate='<b>%{label}</b><br>Companies: %{value}<br>Share: %{percent}<extra></extra>'
             )
             fig_donut.update_layout(
-                paper_bgcolor='rgba(0,0,0,0)',
-                plot_bgcolor='rgba(0,0,0,0)',
+                paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
                 title_font_size=15,
                 showlegend=True,
                 legend_title='Risk Level',
@@ -858,6 +857,7 @@ with tab1:
             st.plotly_chart(fig_risk_bar, use_container_width=True)
 
         st.markdown("<hr style='border:1px solid #dce3ea;margin:8px 0 20px;'>", unsafe_allow_html=True)
+
         # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         # SECTION 5 — PILLAR SCORE DISTRIBUTIONS
         # Three histograms with distinct axis labels and descriptions

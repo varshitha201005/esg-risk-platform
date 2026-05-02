@@ -883,7 +883,7 @@ with tab4:
         col4.metric("F1 Score", f"{r['f1']:.2%}")
 
         st.markdown("### 🔲 Confusion Matrix")
-        fig_cm, ax = plt.subplots(figsize=(6, 4))
+        fig_cm, ax = plt.subplots(figsize=(2, 2))
         sns.heatmap(
             r['confusion_matrix'], annot=True, fmt='d', cmap='Blues', ax=ax,
             xticklabels=["Low", "Medium", "High"],

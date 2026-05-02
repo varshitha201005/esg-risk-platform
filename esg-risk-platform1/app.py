@@ -666,118 +666,8 @@ with tab1:
 
         st.markdown("<br>", unsafe_allow_html=True)
 
-
         # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        # SECTION 2 — COMPANY RANKINGS
-        # Left : Horizontal bar — top 15 companies ranked by ESG score
-        # Right: Box plot — ESG score spread within each risk tier
-        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        st.markdown("""
-        <div style='border-left:4px solid #f39c12;padding:4px 0 4px 14px;margin-bottom:16px;'>
-            <span style='font-size:1.05rem;font-weight:600;color:#1a3c5e;'>🏆 Company Rankings & Score Spread</span>
-        </div>""", unsafe_allow_html=True)
-
-        col1, col2 = st.columns(2)
-        with col1:
-            top15 = filtered_df.nlargest(15, 'esg_score').sort_values('esg_score')
-            fig_hbar = px.bar(
-                top15, y='company', x='esg_score',
-                orientation='h', color='risk_label',
-                title='Top 15 Companies by ESG Score',
-                color_discrete_map=RISK_COLORS,
-                text='esg_score'
-            )
-            fig_hbar.update_layout(
-                paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
-                xaxis_title='ESG Score (0–100)', yaxis_title='',
-                legend_title='Risk Level', title_font_size=15,
-                xaxis=dict(range=[0, 110], gridcolor='rgba(0,0,0,0.05)'),
-                margin=dict(l=10)
-            )
-            fig_hbar.update_traces(texttemplate='%{text}', textposition='outside')
-            st.plotly_chart(fig_hbar, use_container_width=True)
-
-        with col2:
-            fig_box = px.box(
-                filtered_df, x='risk_label', y='esg_score',
-                color='risk_label',
-                title='ESG Score Spread per Risk Tier',
-                color_discrete_map=RISK_COLORS,
-                points='all',
-                hover_name='company'
-            )
-            fig_box.update_layout(
-                paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
-                xaxis_title='Risk Level', yaxis_title='ESG Score (0–100)',
-                showlegend=False, title_font_size=15,
-                yaxis=dict(range=[0, 110], gridcolor='rgba(0,0,0,0.05)')
-            )
-            st.plotly_chart(fig_box, use_container_width=True)
-
-        st.markdown("<hr style='border:1px solid #dce3ea;margin:8px 0 20px;'>", unsafe_allow_html=True)
-
-        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        # SECTION 3 — ESG PILLAR DEEP-DIVE
-        # Left : Scatter — Environmental vs Social (size = ESG score)
-        # Right: Grouped bar — avg E / S / G per company (top 10)
-        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        st.markdown("""
-        <div style='border-left:4px solid #9b59b6;padding:4px 0 4px 14px;margin-bottom:16px;'>
-            <span style='font-size:1.05rem;font-weight:600;color:#1a3c5e;'>🔬 ESG Pillar Deep-Dive</span>
-        </div>""", unsafe_allow_html=True)
-
-        col1, col2 = st.columns(2)
-        with col1:
-            fig_scatter = px.scatter(
-                filtered_df,
-                x='environmental_score', y='social_score',
-                size='esg_score', color='risk_label',
-                hover_name='company',
-                hover_data={'governance_score': True, 'esg_score': True,
-                            'environmental_score': False, 'social_score': False},
-                title='Environmental vs Social Score<br><sup>Bubble size = overall ESG score</sup>',
-                color_discrete_map=RISK_COLORS,
-                labels={'environmental_score': 'Environmental Score',
-                        'social_score': 'Social Score'}
-            )
-            fig_scatter.update_layout(
-                paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
-                title_font_size=15, legend_title='Risk Level',
-                xaxis=dict(range=[0, 110], gridcolor='rgba(0,0,0,0.05)',
-                           title='Environmental Score (0–100)'),
-                yaxis=dict(range=[0, 110], gridcolor='rgba(0,0,0,0.05)',
-                           title='Social Score (0–100)')
-            )
-            st.plotly_chart(fig_scatter, use_container_width=True)
-
-        with col2:
-            top10_companies = filtered_df.nlargest(10, 'esg_score')
-            pillar_df = top10_companies[
-                ['company', 'environmental_score', 'social_score', 'governance_score']
-            ].melt(id_vars='company', var_name='Pillar', value_name='Score')
-            pillar_df['Pillar'] = pillar_df['Pillar'].map({
-                'environmental_score': '🌱 Environmental',
-                'social_score': '🤝 Social',
-                'governance_score': '🏛️ Governance'
-            })
-            fig_pillar = px.bar(
-                pillar_df, x='company', y='Score', color='Pillar',
-                barmode='group',
-                title='E / S / G Pillar Scores — Top 10 Companies',
-                color_discrete_sequence=['#27ae60', '#2980b9', '#8e44ad']
-            )
-            fig_pillar.update_layout(
-                paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
-                xaxis_tickangle=-35, xaxis_title='', yaxis_title='Score (0–100)',
-                legend_title='ESG Pillar', title_font_size=15,
-                yaxis=dict(range=[0, 115], gridcolor='rgba(0,0,0,0.05)')
-            )
-            st.plotly_chart(fig_pillar, use_container_width=True)
-
-        st.markdown("<hr style='border:1px solid #dce3ea;margin:8px 0 20px;'>", unsafe_allow_html=True)
-
-        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        # SECTION 4 — RISK OVERVIEW
+        # SECTION 2 — RISK OVERVIEW
         # Left : Donut — what % of companies fall in each risk tier
         # Right: Grouped bar — avg E / S / G score per risk tier
         # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -857,6 +747,117 @@ with tab1:
             st.plotly_chart(fig_risk_bar, use_container_width=True)
 
         st.markdown("<hr style='border:1px solid #dce3ea;margin:8px 0 20px;'>", unsafe_allow_html=True)
+
+
+        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        # SECTION 3 — COMPANY RANKINGS
+        # Left : Horizontal bar — top 15 companies ranked by ESG score
+        # Right: Box plot — ESG score spread within each risk tier
+        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        st.markdown("""
+        <div style='border-left:4px solid #f39c12;padding:4px 0 4px 14px;margin-bottom:16px;'>
+            <span style='font-size:1.05rem;font-weight:600;color:#1a3c5e;'>🏆 Company Rankings & Score Spread</span>
+        </div>""", unsafe_allow_html=True)
+
+        col1, col2 = st.columns(2)
+        with col1:
+            top15 = filtered_df.nlargest(15, 'esg_score').sort_values('esg_score')
+            fig_hbar = px.bar(
+                top15, y='company', x='esg_score',
+                orientation='h', color='risk_label',
+                title='Top 15 Companies by ESG Score',
+                color_discrete_map=RISK_COLORS,
+                text='esg_score'
+            )
+            fig_hbar.update_layout(
+                paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+                xaxis_title='ESG Score (0–100)', yaxis_title='',
+                legend_title='Risk Level', title_font_size=15,
+                xaxis=dict(range=[0, 110], gridcolor='rgba(0,0,0,0.05)'),
+                margin=dict(l=10)
+            )
+            fig_hbar.update_traces(texttemplate='%{text}', textposition='outside')
+            st.plotly_chart(fig_hbar, use_container_width=True)
+
+        with col2:
+            fig_box = px.box(
+                filtered_df, x='risk_label', y='esg_score',
+                color='risk_label',
+                title='ESG Score Spread per Risk Tier',
+                color_discrete_map=RISK_COLORS,
+                points='all',
+                hover_name='company'
+            )
+            fig_box.update_layout(
+                paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+                xaxis_title='Risk Level', yaxis_title='ESG Score (0–100)',
+                showlegend=False, title_font_size=15,
+                yaxis=dict(range=[0, 110], gridcolor='rgba(0,0,0,0.05)')
+            )
+            st.plotly_chart(fig_box, use_container_width=True)
+
+        st.markdown("<hr style='border:1px solid #dce3ea;margin:8px 0 20px;'>", unsafe_allow_html=True)
+
+        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        # SECTION 4 — ESG PILLAR DEEP-DIVE
+        # Left : Scatter — Environmental vs Social (size = ESG score)
+        # Right: Grouped bar — avg E / S / G per company (top 10)
+        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        st.markdown("""
+        <div style='border-left:4px solid #9b59b6;padding:4px 0 4px 14px;margin-bottom:16px;'>
+            <span style='font-size:1.05rem;font-weight:600;color:#1a3c5e;'>🔬 ESG Pillar Deep-Dive</span>
+        </div>""", unsafe_allow_html=True)
+
+        col1, col2 = st.columns(2)
+        with col1:
+            fig_scatter = px.scatter(
+                filtered_df,
+                x='environmental_score', y='social_score',
+                size='esg_score', color='risk_label',
+                hover_name='company',
+                hover_data={'governance_score': True, 'esg_score': True,
+                            'environmental_score': False, 'social_score': False},
+                title='Environmental vs Social Score<br><sup>Bubble size = overall ESG score</sup>',
+                color_discrete_map=RISK_COLORS,
+                labels={'environmental_score': 'Environmental Score',
+                        'social_score': 'Social Score'}
+            )
+            fig_scatter.update_layout(
+                paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+                title_font_size=15, legend_title='Risk Level',
+                xaxis=dict(range=[0, 110], gridcolor='rgba(0,0,0,0.05)',
+                           title='Environmental Score (0–100)'),
+                yaxis=dict(range=[0, 110], gridcolor='rgba(0,0,0,0.05)',
+                           title='Social Score (0–100)')
+            )
+            st.plotly_chart(fig_scatter, use_container_width=True)
+
+        with col2:
+            top10_companies = filtered_df.nlargest(10, 'esg_score')
+            pillar_df = top10_companies[
+                ['company', 'environmental_score', 'social_score', 'governance_score']
+            ].melt(id_vars='company', var_name='Pillar', value_name='Score')
+            pillar_df['Pillar'] = pillar_df['Pillar'].map({
+                'environmental_score': '🌱 Environmental',
+                'social_score': '🤝 Social',
+                'governance_score': '🏛️ Governance'
+            })
+            fig_pillar = px.bar(
+                pillar_df, x='company', y='Score', color='Pillar',
+                barmode='group',
+                title='E / S / G Pillar Scores — Top 10 Companies',
+                color_discrete_sequence=['#27ae60', '#2980b9', '#8e44ad']
+            )
+            fig_pillar.update_layout(
+                paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+                xaxis_tickangle=-35, xaxis_title='', yaxis_title='Score (0–100)',
+                legend_title='ESG Pillar', title_font_size=15,
+                yaxis=dict(range=[0, 115], gridcolor='rgba(0,0,0,0.05)')
+            )
+            st.plotly_chart(fig_pillar, use_container_width=True)
+
+        st.markdown("<hr style='border:1px solid #dce3ea;margin:8px 0 20px;'>", unsafe_allow_html=True)
+
 
         # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         # SECTION 5 — PILLAR SCORE DISTRIBUTIONS

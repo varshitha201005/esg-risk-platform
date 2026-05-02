@@ -1530,8 +1530,7 @@ with tab4:
                 ("🔍 Precision", r['precision'], "#2980b9", "Positive prediction accuracy"),
                 ("📡 Recall",    r['recall'],    "#9b59b6", "True positive detection rate"),
                 ("⚖️ F1 Score",  r['f1'],        "#e67e22", "Harmonic mean of P & R"),
-                ("🔄 CV F1",     r['cv_mean'],   "#16a085",
-                 f"5-fold mean ± {r['cv_std']:.2f}"),
+
             ]
             cols = st.columns(5)
             for col, (label, value, color, subtitle) in zip(cols, metrics):

@@ -888,26 +888,27 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-cm = np.array(r['confusion_matrix'])
+# ✅ Force proper format
+cm = np.array(r.get('confusion_matrix', [[0,0,0],[0,0,0],[0,0,0]]))
 
+# ✅ Safe calculations
 total = cm.sum()
 correct = np.trace(cm)
 accuracy = correct / total if total != 0 else 0
-errors = total - correct
 
 class_names = ["Low", "Medium", "High"]
 
-# Safe class accuracy (avoid divide by zero)
+# ✅ Safe class accuracy
 row_sums = cm.sum(axis=1)
 class_acc = [
     (cm[i][i] / row_sums[i]) if row_sums[i] != 0 else 0
     for i in range(len(class_names))
 ]
 
-# -------- Layout --------
+# Layout
 col1, col2 = st.columns([1, 2])
 
-# -------- Small Matrix --------
+# Matrix
 with col1:
     fig, ax = plt.subplots(figsize=(2.5, 2.2))
 
@@ -918,7 +919,6 @@ with col1:
         cmap='Blues',
         cbar=False,
         square=True,
-        linewidths=0.5,
         xticklabels=["L", "M", "H"],
         yticklabels=["L", "M", "H"],
         ax=ax
@@ -930,7 +930,7 @@ with col1:
 
     st.pyplot(fig)
 
-# -------- Insights --------
+# Insights
 with col2:
     c1, c2, c3 = st.columns(3)
 

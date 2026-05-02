@@ -882,15 +882,33 @@ with tab4:
         col3.metric("Recall", f"{r['recall']:.2%}")
         col4.metric("F1 Score", f"{r['f1']:.2%}")
 
-    st.markdown("### 🔲 Confusion Summary")
+    st.markdown("### Confusion Matrix")
 
-cm = r['confusion_matrix']
+fig_cm, ax = plt.subplots(figsize=(2.5, 2.2))
 
-col1, col2, col3 = st.columns(3)
+sns.heatmap(
+    r['confusion_matrix'],
+    annot=True,
+    fmt='d',
+    cmap='Blues',
+    cbar=False,
+    square=True,
+    linewidths=0.2,
+    annot_kws={"size": 9},
+    xticklabels=["L", "M", "H"],
+    yticklabels=["L", "M", "H"],
+    ax=ax
+)
 
-col1.metric("Correct Predictions", int(cm.trace()))
-col2.metric("Total Samples", int(cm.sum()))
-col3.metric("Accuracy", f"{(cm.trace()/cm.sum()):.2%}")
+ax.set_xlabel("")
+ax.set_ylabel("")
+ax.tick_params(length=0)
+
+for spine in ax.spines.values():
+    spine.set_visible(False)
+
+plt.tight_layout()
+st.pyplot(fig_cm)
 # ══════════════════════════════════════════════════════════════════════════════
 # TAB 5 — COMPANY INSIGHTS
 # ══════════════════════════════════════════════════════════════════════════════

@@ -965,7 +965,11 @@ with tab2:
 # TAB 3 — ML PREDICTIONS
 # ══════════════════════════════════════════════════════════════════════════════
 with tab3:
-    st.subheader("🤖 Machine Learning Risk Prediction")
+    st.markdown("""
+    <div style='border-left:4px solid #2ecc71;padding:4px 0 4px 14px;margin-bottom:16px;'>
+        <span style='font-size:1.05rem;font-weight:600;color:#1a3c5e;'>🤖 Machine Learning Risk Prediction</span>
+    </div>""", unsafe_allow_html=True)
+
     if len(df) < 5:
         st.warning("⚠️ Need at least 5 companies to train models.")
     else:
@@ -973,24 +977,85 @@ with tab3:
             results, scaler = train_models(df)
         st.success(f"✅ Models trained on {len(df)} companies!")
 
-        st.markdown("### 📊 Model Performance Comparison")
+        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        # SECTION A — MODEL PERFORMANCE COMPARISON
+        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        st.markdown("""
+        <div style='border-left:4px solid #2980b9;padding:4px 0 4px 14px;margin-bottom:16px;'>
+            <span style='font-size:1rem;font-weight:600;color:#1a3c5e;'>📊 Model Performance Comparison</span>
+        </div>""", unsafe_allow_html=True)
+
         perf_data = {
-            "Model": list(results.keys()),
-            "Accuracy": [round(r['accuracy'], 3) for r in results.values()],
+            "Model":     list(results.keys()),
+            "Accuracy":  [round(r['accuracy'],  3) for r in results.values()],
             "Precision": [round(r['precision'], 3) for r in results.values()],
-            "Recall": [round(r['recall'], 3) for r in results.values()],
-            "F1 Score": [round(r['f1'], 3) for r in results.values()]
+            "Recall":    [round(r['recall'],    3) for r in results.values()],
+            "F1 Score":  [round(r['f1'],        3) for r in results.values()]
         }
         perf_df = pd.DataFrame(perf_data)
-        st.dataframe(perf_df, use_container_width=True)
+
+        # metric cards per model
+        cols = st.columns(len(results))
+        model_colors = ['#2ecc71', '#e74c3c', '#f39c12']
+        for col, (name, res), color in zip(cols, results.items(), model_colors):
+            with col:
+                st.markdown(f"""
+                <div style='background:white;border-radius:14px;padding:18px;
+                            text-align:center;box-shadow:0 2px 10px rgba(0,0,0,0.07);
+                            border-top:4px solid {color};'>
+                    <p style='color:#1a3c5e;font-size:0.9rem;font-weight:700;margin:0 0 10px 0;'>{name}</p>
+                    <div style='display:grid;grid-template-columns:1fr 1fr;gap:8px;'>
+                        <div style='background:#f8f9fa;border-radius:8px;padding:8px;'>
+                            <p style='color:#888;font-size:0.7rem;margin:0;'>Accuracy</p>
+                            <p style='color:{color};font-size:1.1rem;font-weight:700;margin:0;'>{res['accuracy']:.1%}</p>
+                        </div>
+                        <div style='background:#f8f9fa;border-radius:8px;padding:8px;'>
+                            <p style='color:#888;font-size:0.7rem;margin:0;'>Precision</p>
+                            <p style='color:{color};font-size:1.1rem;font-weight:700;margin:0;'>{res['precision']:.1%}</p>
+                        </div>
+                        <div style='background:#f8f9fa;border-radius:8px;padding:8px;'>
+                            <p style='color:#888;font-size:0.7rem;margin:0;'>Recall</p>
+                            <p style='color:{color};font-size:1.1rem;font-weight:700;margin:0;'>{res['recall']:.1%}</p>
+                        </div>
+                        <div style='background:#f8f9fa;border-radius:8px;padding:8px;'>
+                            <p style='color:#888;font-size:0.7rem;margin:0;'>F1 Score</p>
+                            <p style='color:{color};font-size:1.1rem;font-weight:700;margin:0;'>{res['f1']:.1%}</p>
+                        </div>
+                    </div>
+                </div>""", unsafe_allow_html=True)
+
+        st.markdown("<br>", unsafe_allow_html=True)
+
+        # grouped bar
         fig_perf = px.bar(
             perf_df.melt(id_vars='Model', var_name='Metric', value_name='Score'),
-            x='Model', y='Score', color='Metric', barmode='group',
-            title='Model Performance Comparison'
+            x='Model', y='Score', color='Metric',
+            barmode='group',
+            text_auto='.1%',
+            title='Model Performance — All Metrics',
+            color_discrete_sequence=['#2ecc71', '#2980b9', '#9b59b6', '#e67e22']
+        )
+        fig_perf.update_traces(textposition='outside', textfont_size=10)
+        fig_perf.update_layout(
+            paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+            yaxis=dict(range=[0, 1.15], tickformat='.0%',
+                       gridcolor='rgba(0,0,0,0.05)', title='Score'),
+            xaxis_title='', legend_title='Metric',
+            title_font_size=15,
+            uniformtext_minsize=8, uniformtext_mode='hide'
         )
         st.plotly_chart(fig_perf, use_container_width=True)
 
-        st.markdown("### 🔮 Predict Risk for New Company")
+        st.markdown("<hr style='border:1px solid #dce3ea;margin:8px 0 20px;'>", unsafe_allow_html=True)
+
+        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        # SECTION B — PREDICT RISK FOR NEW COMPANY
+        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        st.markdown("""
+        <div style='border-left:4px solid #9b59b6;padding:4px 0 4px 14px;margin-bottom:16px;'>
+            <span style='font-size:1rem;font-weight:600;color:#1a3c5e;'>🔮 Predict Risk for New Company</span>
+        </div>""", unsafe_allow_html=True)
+
         col1, col2, col3 = st.columns(3)
         with col1:
             env = st.slider("🌱 Environmental Score", 0, 100, 50)
@@ -999,23 +1064,165 @@ with tab3:
         with col3:
             gov = st.slider("🏛️ Governance Score", 0, 100, 50)
 
+        # live ESG preview while sliding
+        live_esg = round((env * 0.4) + (soc * 0.3) + (gov * 0.3), 1)
+        live_risk = get_risk_label(live_esg)
+        live_color = get_risk_color(live_risk)
+        st.markdown(f"""
+        <div style='background:white;border-radius:12px;padding:12px 20px;
+                    margin:10px 0;border-left:4px solid {live_color};
+                    box-shadow:0 2px 8px rgba(0,0,0,0.06);display:flex;
+                    align-items:center;gap:16px;'>
+            <span style='color:#666;font-size:0.9rem;'>Live Preview →</span>
+            <span style='color:{live_color};font-weight:700;font-size:1rem;'>{live_risk}</span>
+            <span style='color:#1a3c5e;font-size:0.9rem;'>ESG Score: <strong>{live_esg}</strong></span>
+        </div>""", unsafe_allow_html=True)
+
         if st.button("🔮 Predict Risk Level"):
-            model = results[selected_model]['model']
+            model  = results[selected_model]['model']
             input_data = scaler.transform([[env, soc, gov]])
             prediction = model.predict(input_data)[0]
-            risk_map = {0: "Low Risk", 1: "Medium Risk", 2: "High Risk"}
+
+            # probability scores if supported
+            has_proba = hasattr(model, "predict_proba")
+            proba = model.predict_proba(input_data)[0] if has_proba else None
+
+            risk_map   = {0: "Low Risk", 1: "Medium Risk", 2: "High Risk"}
             predicted_risk = risk_map[prediction]
-            esg = round((env * 0.4) + (soc * 0.3) + (gov * 0.3), 1)
-            color = get_risk_color(predicted_risk)
+            esg        = round((env * 0.4) + (soc * 0.3) + (gov * 0.3), 1)
+            color      = get_risk_color(predicted_risk)
+
+            # weighted contributions
+            env_contrib = round(env * 0.4, 1)
+            soc_contrib = round(soc * 0.3, 1)
+            gov_contrib = round(gov * 0.3, 1)
+
+            col1, col2 = st.columns([1, 1])
+
+            with col1:
+                st.markdown(f"""
+                <div style='background:white;border-radius:14px;padding:28px;
+                            text-align:center;border-top:5px solid {color};
+                            box-shadow:0 4px 15px rgba(0,0,0,0.08);'>
+                    <p style='color:#888;font-size:0.85rem;margin:0;'>Predicted Risk Level</p>
+                    <h1 style='color:{color};margin:8px 0;font-size:2.2rem;'>{predicted_risk}</h1>
+                    <div style='background:{color}18;border-radius:20px;
+                                padding:8px 20px;display:inline-block;margin:8px 0;'>
+                        <span style='color:{color};font-weight:700;font-size:1.3rem;'>
+                            ESG Score: {esg} / 100
+                        </span>
+                    </div>
+                    <p style='color:#666;font-size:0.85rem;margin:8px 0 0 0;'>
+                        Model: <strong>{selected_model}</strong>
+                    </p>
+                </div>""", unsafe_allow_html=True)
+
+                # confidence bar if proba available
+                if proba is not None:
+                    st.markdown("<br>", unsafe_allow_html=True)
+                    st.markdown("""
+                    <div style='background:white;border-radius:12px;padding:18px;
+                                box-shadow:0 2px 8px rgba(0,0,0,0.06);'>
+                        <p style='color:#1a3c5e;font-weight:600;margin:0 0 12px 0;'>
+                            🎲 Confidence Probabilities
+                        </p>""", unsafe_allow_html=True)
+
+                    prob_colors = ['#2ecc71', '#f39c12', '#e74c3c']
+                    for label, prob, pc in zip(
+                        ["Low Risk", "Medium Risk", "High Risk"],
+                        proba, prob_colors
+                    ):
+                        st.markdown(f"""
+                        <div style='margin-bottom:10px;'>
+                            <div style='display:flex;justify-content:space-between;
+                                        margin-bottom:4px;'>
+                                <span style='font-size:0.85rem;color:#444;'>{label}</span>
+                                <span style='font-size:0.85rem;font-weight:700;
+                                             color:{pc};'>{prob:.1%}</span>
+                            </div>
+                            <div style='background:#f0f0f0;border-radius:10px;height:8px;'>
+                                <div style='background:{pc};width:{prob*100:.1f}%;
+                                            height:8px;border-radius:10px;
+                                            transition:width 0.5s ease;'></div>
+                            </div>
+                        </div>""", unsafe_allow_html=True)
+                    st.markdown("</div>", unsafe_allow_html=True)
+
+            with col2:
+                # pillar contribution donut
+                fig_contrib = go.Figure(data=[go.Pie(
+                    labels=['🌱 Environmental (40%)', '🤝 Social (30%)', '🏛️ Governance (30%)'],
+                    values=[env_contrib, soc_contrib, gov_contrib],
+                    hole=0.55,
+                    marker_colors=['#27ae60', '#2980b9', '#8e44ad'],
+                    textinfo='label+percent',
+                    hovertemplate='<b>%{label}</b><br>Contribution: %{value}<extra></extra>'
+                )])
+                fig_contrib.update_layout(
+                    title=dict(text="Pillar Contribution to ESG Score", font_size=14),
+                    paper_bgcolor='rgba(0,0,0,0)',
+                    showlegend=False,
+                    annotations=[dict(
+                        text=f"<b>{esg}</b>",
+                        x=0.5, y=0.5, font_size=22,
+                        showarrow=False
+                    )],
+                    height=300,
+                    margin=dict(l=10, r=10, t=40, b=10)
+                )
+                st.plotly_chart(fig_contrib, use_container_width=True)
+
+                # pillar score vs dataset avg
+                avg_env = round(df['environmental_score'].mean(), 1)
+                avg_soc = round(df['social_score'].mean(), 1)
+                avg_gov = round(df['governance_score'].mean(), 1)
+
+                fig_vs = go.Figure()
+                fig_vs.add_trace(go.Bar(
+                    name='Your Company',
+                    x=['🌱 Environmental', '🤝 Social', '🏛️ Governance'],
+                    y=[env, soc, gov],
+                    marker_color=color,
+                    text=[env, soc, gov],
+                    textposition='outside'
+                ))
+                fig_vs.add_trace(go.Bar(
+                    name='Dataset Avg',
+                    x=['🌱 Environmental', '🤝 Social', '🏛️ Governance'],
+                    y=[avg_env, avg_soc, avg_gov],
+                    marker_color='rgba(0,0,0,0.15)',
+                    text=[avg_env, avg_soc, avg_gov],
+                    textposition='outside'
+                ))
+                fig_vs.update_layout(
+                    barmode='group',
+                    title=dict(text="Your Scores vs Dataset Average", font_size=14),
+                    paper_bgcolor='rgba(0,0,0,0)',
+                    plot_bgcolor='rgba(0,0,0,0)',
+                    yaxis=dict(range=[0, 120], gridcolor='rgba(0,0,0,0.05)'),
+                    xaxis_title='', yaxis_title='Score (0–100)',
+                    legend=dict(orientation='h', y=-0.25, x=0.5, xanchor='center'),
+                    height=280,
+                    margin=dict(l=10, r=10, t=40, b=10)
+                )
+                st.plotly_chart(fig_vs, use_container_width=True)
+
+            # investment verdict banner
+            verdict_map = {
+                "Low Risk":    ("✅ Safe Investment",       "#eafaf1", "#27ae60",
+                                "This company demonstrates strong ESG practices across all pillars. Recommended for ESG-conscious portfolios."),
+                "Medium Risk": ("⚠️ Moderate Risk",         "#fef9e7", "#e67e22",
+                                "Average ESG performance detected. Consider monitoring pillar scores before committing."),
+                "High Risk":   ("🚨 High Risk — Caution",   "#fdedec", "#e74c3c",
+                                "Poor ESG scores indicate significant sustainability concerns. Investment not recommended."),
+            }
+            verdict_label, bg, vc, msg = verdict_map[predicted_risk]
             st.markdown(f"""
-            <div style='background:white; border-radius:12px; padding:25px;
-                        text-align:center; border-top: 5px solid {color};
-                        box-shadow: 0 2px 10px rgba(0,0,0,0.08);'>
-                <h2 style='color:{color}'>{predicted_risk}</h2>
-                <p style='font-size:1.1rem'>Overall ESG Score: <strong>{esg} / 100</strong></p>
-                <p>Model used: <strong>{selected_model}</strong></p>
-            </div>
-            """, unsafe_allow_html=True)
+            <div style='background:{bg};border-radius:12px;padding:16px 22px;
+                        margin-top:16px;border-left:5px solid {vc};'>
+                <strong style='color:{vc};font-size:1rem;'>{verdict_label}</strong>
+                <p style='color:#444;margin:6px 0 0 0;font-size:0.9rem;'>{msg}</p>
+            </div>""", unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════════════════════
 # TAB 4 — MODEL EVALUATION
@@ -1266,7 +1473,11 @@ with tab4:
 # TAB 5 — COMPANY INSIGHTS
 # ══════════════════════════════════════════════════════════════════════════════
 with tab5:
-    st.subheader("🏢 Company Insights")
+    st.markdown("""
+    <div style='border-left:4px solid #e67e22;padding:4px 0 4px 14px;margin-bottom:16px;'>
+        <span style='font-size:1.05rem;font-weight:600;color:#1a3c5e;'>🏢 Company Insights</span>
+    </div>""", unsafe_allow_html=True)
+
     if filtered_df.empty:
         st.warning("⚠️ No companies match the current filters.")
     else:
@@ -1274,53 +1485,265 @@ with tab5:
         company = filtered_df[filtered_df['company'] == selected_company].iloc[0]
         risk_color = get_risk_color(company['risk_label'])
 
+        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        # SECTION A — PROFILE CARD + RADAR
+        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        st.markdown("""
+        <div style='border-left:4px solid #2ecc71;padding:4px 0 4px 14px;margin-bottom:16px;'>
+            <span style='font-size:1rem;font-weight:600;color:#1a3c5e;'>🪪 Company Profile</span>
+        </div>""", unsafe_allow_html=True)
+
         col1, col2 = st.columns(2)
         with col1:
+            # rank within filtered_df
+            rank = filtered_df['esg_score'].rank(ascending=False).loc[
+                filtered_df['company'] == selected_company
+            ].values[0]
+            rank = int(rank)
+            pct  = round((1 - (rank / len(filtered_df))) * 100, 1)
+
             st.markdown(f"""
-            <div style='background:white; border-radius:12px; padding:25px;
-                        border-top: 5px solid {risk_color};
-                        box-shadow: 0 2px 10px rgba(0,0,0,0.08);'>
-                <h2>{company['company']}</h2>
-                <h3 style='color:{risk_color}'>{company['risk_label']}</h3>
-                <p style='font-size:1.1rem'>Overall ESG Score: <strong>{company['esg_score']} / 100</strong></p>
-                <hr/>
-                <p>🌱 Environmental Score: <strong>{round(company['environmental_score'], 1)}</strong></p>
-                <p>🤝 Social Score: <strong>{round(company['social_score'], 1)}</strong></p>
-                <p>🏛️ Governance Score: <strong>{round(company['governance_score'], 1)}</strong></p>
-            </div>
-            """, unsafe_allow_html=True)
+            <div style='background:white;border-radius:14px;padding:28px;
+                        border-top:5px solid {risk_color};
+                        box-shadow:0 4px 15px rgba(0,0,0,0.08);'>
+                <div style='display:flex;justify-content:space-between;align-items:center;'>
+                    <div>
+                        <h2 style='color:#1a3c5e;margin:0;'>{company['company']}</h2>
+                        <span style='background:{risk_color}18;color:{risk_color};
+                                     border-radius:20px;padding:4px 14px;
+                                     font-size:0.85rem;font-weight:600;'>
+                            {company['risk_label']}
+                        </span>
+                    </div>
+                    <div style='text-align:right;'>
+                        <p style='color:#888;font-size:0.8rem;margin:0;'>Dataset Rank</p>
+                        <h2 style='color:{risk_color};margin:0;'>#{rank}</h2>
+                        <p style='color:#888;font-size:0.75rem;margin:0;'>
+                            Top {100 - pct:.1f}%
+                        </p>
+                    </div>
+                </div>
+                <hr style='border:1px solid #f0f0f0;margin:16px 0;'/>
+                <div style='display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;'>
+                    <div style='background:#f8f9fa;border-radius:10px;padding:14px;text-align:center;'>
+                        <p style='color:#27ae60;font-size:0.75rem;margin:0;'>🌱 Environmental</p>
+                        <h3 style='color:#1a3c5e;margin:4px 0;'>{round(company['environmental_score'],1)}</h3>
+                    </div>
+                    <div style='background:#f8f9fa;border-radius:10px;padding:14px;text-align:center;'>
+                        <p style='color:#2980b9;font-size:0.75rem;margin:0;'>🤝 Social</p>
+                        <h3 style='color:#1a3c5e;margin:4px 0;'>{round(company['social_score'],1)}</h3>
+                    </div>
+                    <div style='background:#f8f9fa;border-radius:10px;padding:14px;text-align:center;'>
+                        <p style='color:#8e44ad;font-size:0.75rem;margin:0;'>🏛️ Governance</p>
+                        <h3 style='color:#1a3c5e;margin:4px 0;'>{round(company['governance_score'],1)}</h3>
+                    </div>
+                </div>
+                <div style='background:linear-gradient(135deg,#f8f9fa,#eaf4fb);
+                            border-radius:10px;padding:14px;text-align:center;margin-top:12px;'>
+                    <p style='color:#888;font-size:0.8rem;margin:0;'>Overall ESG Score</p>
+                    <h1 style='color:{risk_color};margin:4px 0;font-size:2.5rem;'>
+                        {company['esg_score']}<span style='font-size:1rem;color:#888;'> / 100</span>
+                    </h1>
+                </div>
+            </div>""", unsafe_allow_html=True)
+
         with col2:
             fig_radar = go.Figure(data=go.Scatterpolar(
-                r=[company['environmental_score'], company['social_score'], company['governance_score']],
+                r=[company['environmental_score'], company['social_score'],
+                   company['governance_score']],
                 theta=['Environmental', 'Social', 'Governance'],
-                fill='toself', line_color=risk_color
+                fill='toself',
+                line_color=risk_color,
+                fillcolor=f"{risk_color}22",
+                name=selected_company
+            ))
+            # dataset avg overlay
+            fig_radar.add_trace(go.Scatterpolar(
+                r=[
+                    round(filtered_df['environmental_score'].mean(), 1),
+                    round(filtered_df['social_score'].mean(), 1),
+                    round(filtered_df['governance_score'].mean(), 1)
+                ],
+                theta=['Environmental', 'Social', 'Governance'],
+                fill='toself',
+                line_color='rgba(0,0,0,0.2)',
+                fillcolor='rgba(0,0,0,0.04)',
+                name='Dataset Avg',
+                line_dash='dash'
             ))
             fig_radar.update_layout(
                 polar=dict(radialaxis=dict(visible=True, range=[0, 100])),
-                title=f"{company['company']} ESG Radar Chart"
+                title=dict(
+                    text=f"{company['company']} vs Dataset Average",
+                    font_size=15
+                ),
+                paper_bgcolor='rgba(0,0,0,0)',
+                legend=dict(orientation='h', y=-0.15, x=0.5, xanchor='center'),
+                height=380
             )
             st.plotly_chart(fig_radar, use_container_width=True)
 
-        st.markdown("### 💡 Investment Recommendation")
-        if company['risk_label'] == 'Low Risk':
-            st.success(f"✅ **Safe Investment** — {company['company']} has strong ESG practices and is a safe investment.")
-        elif company['risk_label'] == 'Medium Risk':
-            st.warning(f"⚠️ **Moderate Risk** — {company['company']} shows average ESG performance. Invest with caution.")
-        else:
-            st.error(f"🚨 **High Risk – Caution** — {company['company']} has poor ESG scores. Investment is not recommended.")
+        st.markdown("<hr style='border:1px solid #dce3ea;margin:8px 0 20px;'>", unsafe_allow_html=True)
 
-        st.markdown("### 📊 Score Breakdown")
+        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        # SECTION B — INVESTMENT RECOMMENDATION + SCORE BREAKDOWN
+        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        st.markdown("""
+        <div style='border-left:4px solid #2980b9;padding:4px 0 4px 14px;margin-bottom:16px;'>
+            <span style='font-size:1rem;font-weight:600;color:#1a3c5e;'>💡 Investment Recommendation & Score Breakdown</span>
+        </div>""", unsafe_allow_html=True)
+
+        verdict_map = {
+            "Low Risk":    ("✅ Safe Investment",     "#eafaf1", "#27ae60",
+                            "This company demonstrates strong ESG practices. Recommended for ESG-conscious portfolios."),
+            "Medium Risk": ("⚠️ Moderate Risk",       "#fef9e7", "#e67e22",
+                            "Average ESG performance. Consider monitoring pillar trends before committing capital."),
+            "High Risk":   ("🚨 High Risk — Caution", "#fdedec", "#e74c3c",
+                            "Poor ESG scores indicate significant sustainability concerns. Investment not recommended."),
+        }
+        verdict_label, bg, vc, msg = verdict_map[company['risk_label']]
+        st.markdown(f"""
+        <div style='background:{bg};border-radius:12px;padding:16px 22px;
+                    margin-bottom:16px;border-left:5px solid {vc};'>
+            <strong style='color:{vc};font-size:1rem;'>{verdict_label}</strong>
+            <p style='color:#444;margin:6px 0 0 0;font-size:0.9rem;'>{msg}</p>
+        </div>""", unsafe_allow_html=True)
+
         score_df = pd.DataFrame({
-            'Category': ['Environmental (40%)', 'Social (30%)', 'Governance (30%)'],
-            'Score': [round(company['environmental_score'], 1), round(company['social_score'], 1), round(company['governance_score'], 1)],
-            'Weighted Score': [round(company['environmental_score'] * 0.4, 1), round(company['social_score'] * 0.3, 1), round(company['governance_score'] * 0.3, 1)]
+            'Category':       ['Environmental (40%)', 'Social (30%)', 'Governance (30%)'],
+            'Raw Score':      [round(company['environmental_score'], 1),
+                               round(company['social_score'],        1),
+                               round(company['governance_score'],    1)],
+            'Weighted Score': [round(company['environmental_score'] * 0.4, 1),
+                               round(company['social_score']        * 0.3, 1),
+                               round(company['governance_score']    * 0.3, 1)]
         })
         fig_scores = px.bar(
-            score_df, x='Category', y='Score', color='Category',
-            title='Category Score Breakdown', text='Weighted Score'
+            score_df, x='Category', y='Raw Score',
+            color='Category', title='Pillar Score Breakdown',
+            text='Weighted Score',
+            color_discrete_sequence=['#27ae60', '#2980b9', '#8e44ad']
+        )
+        fig_scores.update_traces(
+            texttemplate='Weighted: %{text}',
+            textposition='outside'
+        )
+        fig_scores.update_layout(
+            paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+            yaxis=dict(range=[0, 120], gridcolor='rgba(0,0,0,0.05)',
+                       title='Score (0–100)'),
+            xaxis_title='', showlegend=False, title_font_size=15
         )
         st.plotly_chart(fig_scores, use_container_width=True)
 
+        st.markdown("<hr style='border:1px solid #dce3ea;margin:8px 0 20px;'>", unsafe_allow_html=True)
+
+        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        # SECTION C — PEER COMPARISON (same risk tier)
+        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        st.markdown("""
+        <div style='border-left:4px solid #9b59b6;padding:4px 0 4px 14px;margin-bottom:16px;'>
+            <span style='font-size:1rem;font-weight:600;color:#1a3c5e;'>🔎 Peer Comparison — Same Risk Tier</span>
+        </div>""", unsafe_allow_html=True)
+
+        peers = filtered_df[filtered_df['risk_label'] == company['risk_label']].copy()
+
+        if len(peers) <= 1:
+            st.info("ℹ️ No peers in the same risk tier to compare against.")
+        else:
+            tier_avg_env = round(peers['environmental_score'].mean(), 1)
+            tier_avg_soc = round(peers['social_score'].mean(), 1)
+            tier_avg_gov = round(peers['governance_score'].mean(), 1)
+            tier_avg_esg = round(peers['esg_score'].mean(), 1)
+
+            # delta cards vs tier avg
+            deltas = [
+                ("🌱 Environmental", company['environmental_score'], tier_avg_env, "#27ae60"),
+                ("🤝 Social",        company['social_score'],        tier_avg_soc, "#2980b9"),
+                ("🏛️ Governance",   company['governance_score'],    tier_avg_gov, "#8e44ad"),
+                ("📊 ESG Score",     company['esg_score'],           tier_avg_esg, risk_color),
+            ]
+            dcols = st.columns(4)
+            for dcol, (label, val, avg, color) in zip(dcols, deltas):
+                diff  = round(val - avg, 1)
+                arrow = "▲" if diff >= 0 else "▼"
+                dcolor = "#27ae60" if diff >= 0 else "#e74c3c"
+                with dcol:
+                    st.markdown(f"""
+                    <div style='background:white;border-radius:12px;padding:16px;
+                                text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.06);
+                                border-top:3px solid {color};'>
+                        <p style='color:#888;font-size:0.75rem;margin:0;'>{label}</p>
+                        <h3 style='color:#1a3c5e;margin:6px 0;'>{round(val,1)}</h3>
+                        <span style='color:{dcolor};font-size:0.85rem;font-weight:600;'>
+                            {arrow} {abs(diff)} vs tier avg
+                        </span>
+                    </div>""", unsafe_allow_html=True)
+
+            st.markdown("<br>", unsafe_allow_html=True)
+
+            # peer ESG score bar — highlight selected company
+            peers_sorted = peers.sort_values('esg_score', ascending=False).head(15)
+            peers_sorted['highlight'] = peers_sorted['company'].apply(
+                lambda x: selected_company if x == selected_company else 'Peers'
+            )
+            fig_peer = px.bar(
+                peers_sorted,
+                y='company', x='esg_score',
+                orientation='h',
+                color='highlight',
+                color_discrete_map={
+                    selected_company: risk_color,
+                    'Peers': 'rgba(180,180,180,0.5)'
+                },
+                text='esg_score',
+                title=f"ESG Score vs Peers — {company['risk_label']} Tier (Top 15)",
+            )
+            fig_peer.update_traces(texttemplate='%{text}', textposition='outside')
+            fig_peer.update_layout(
+                paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+                xaxis=dict(range=[0, 115], gridcolor='rgba(0,0,0,0.05)',
+                           title='ESG Score (0–100)'),
+                yaxis_title='', legend_title='',
+                title_font_size=15,
+                margin=dict(l=10)
+            )
+            # tier avg line
+            fig_peer.add_vline(
+                x=tier_avg_esg,
+                line_dash="dash", line_color="#888",
+                annotation_text=f"Tier Avg: {tier_avg_esg}",
+                annotation_position="top right",
+                annotation_font_color="#888"
+            )
+            st.plotly_chart(fig_peer, use_container_width=True)
+
+            # peer scatter — E vs G, highlight selected
+            peers['is_selected'] = peers['company'] == selected_company
+            fig_peer_scatter = px.scatter(
+                peers,
+                x='environmental_score', y='governance_score',
+                size='esg_score', color='is_selected',
+                color_discrete_map={True: risk_color, False: 'rgba(180,180,180,0.6)'},
+                hover_name='company',
+                hover_data={'social_score': True, 'esg_score': True,
+                            'is_selected': False},
+                title=f"Peer Scatter — Environmental vs Governance<br>"
+                      f"<sup>Highlighted: {selected_company}</sup>",
+                labels={
+                    'environmental_score': 'Environmental Score',
+                    'governance_score':    'Governance Score'
+                }
+            )
+            fig_peer_scatter.update_layout(
+                paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+                xaxis=dict(range=[0, 110], gridcolor='rgba(0,0,0,0.05)'),
+                yaxis=dict(range=[0, 110], gridcolor='rgba(0,0,0,0.05)'),
+                showlegend=False, title_font_size=15
+            )
+            st.plotly_chart(fig_peer_scatter, use_container_width=True)
+
+        st.markdown("<hr style='border:1px solid #dce3ea;margin:8px 0 20px;'>", unsafe_allow_html=True)
 # ══════════════════════════════════════════════════════════════════════════════
 # TAB 6 — EXPORT REPORT
 # ══════════════════════════════════════════════════════════════════════════════

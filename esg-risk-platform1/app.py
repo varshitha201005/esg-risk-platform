@@ -677,6 +677,12 @@ with tab1:
         </div>""", unsafe_allow_html=True)
 
         col1, col2 = st.columns(2)
+
+        with col1:
+            st.markdown("### Top 15 Companies by ESG Score")
+
+        with col2:
+            st.markdown("### ESG Score Spread per Risk Tier")
         with col1:
             fig_pie = px.pie(
                 filtered_df, names='risk_label',
@@ -687,7 +693,7 @@ with tab1:
             fig_pie.update_layout(
                 paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
                 legend=dict(orientation="v",yanchor="top",y=1,xanchor="right",x=1),
-                title_font_size=15, margin=dict(t=50, b=20)
+                title_font_size=15, margin=dict(t=50, b=60)
             )
             fig_pie.update_traces(textposition='inside', textinfo='percent+label')
             st.plotly_chart(fig_pie, use_container_width=True)

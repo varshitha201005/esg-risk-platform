@@ -19,6 +19,9 @@ import os
 import io
 warnings.filterwarnings('ignore')
 
+import os
+logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "esg_logo.png")
+
 # ─── Page Config ───────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="TripleLens - ESG Risk Analysis Platform",
@@ -571,8 +574,12 @@ def generate_pdf(df, filtered_df):
 # ─── Sidebar ───────────────────────────────────────────────────────────────────
 logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "esg_logo.png")
 if os.path.exists(logo_path):
-    try:    st.sidebar.image(logo_path, use_container_width=True)
-    except: st.sidebar.markdown("### 🌿 TripleLens")
+    import os
+logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "esg_logo.png")
+try:
+    st.sidebar.image(logo_path, use_container_width=True)
+except:
+    st.sidebar.markdown("### 🌿 TripleLens")
 else:
     st.sidebar.markdown("### 🌿 TripleLens")
 

@@ -166,9 +166,6 @@ st.markdown("""
         border-left: 4px solid #e74c3c;
     }
 
-    /* Hide streamlit branding */
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
 </style>
 """, unsafe_allow_html=True)
 

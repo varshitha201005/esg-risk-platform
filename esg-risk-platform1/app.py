@@ -884,24 +884,32 @@ with tab4:
 
 st.markdown("### 🔲 Confusion Analysis")
 
-cm = r['confusion_matrix']
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+cm = np.array(r['confusion_matrix'])
+
 total = cm.sum()
-correct = cm.trace()
-accuracy = correct / total
+correct = np.trace(cm)
+accuracy = correct / total if total != 0 else 0
 errors = total - correct
 
 class_names = ["Low", "Medium", "High"]
-class_acc = cm.diagonal() / cm.sum(axis=1)
 
-# Layout split
-col_left, col_right = st.columns([1, 2])
+# Safe class accuracy (avoid divide by zero)
+row_sums = cm.sum(axis=1)
+class_acc = [
+    (cm[i][i] / row_sums[i]) if row_sums[i] != 0 else 0
+    for i in range(len(class_names))
+]
 
-# ---------------- LEFT: Compact Matrix ----------------
-with col_left:
-    import matplotlib.pyplot as plt
-    import seaborn as sns
+# -------- Layout --------
+col1, col2 = st.columns([1, 2])
 
-    fig_cm, ax = plt.subplots(figsize=(2.2, 2))
+# -------- Small Matrix --------
+with col1:
+    fig, ax = plt.subplots(figsize=(2.5, 2.2))
 
     sns.heatmap(
         cm,
@@ -911,7 +919,6 @@ with col_left:
         cbar=False,
         square=True,
         linewidths=0.5,
-        annot_kws={"size": 9, "weight": "bold"},
         xticklabels=["L", "M", "H"],
         yticklabels=["L", "M", "H"],
         ax=ax
@@ -919,35 +926,23 @@ with col_left:
 
     ax.set_xlabel("")
     ax.set_ylabel("")
-    ax.tick_params(length=0, labelsize=8)
+    plt.tight_layout()
 
-    for spine in ax.spines.values():
-        spine.set_visible(False)
+    st.pyplot(fig)
 
-    plt.tight_layout(pad=0.5)
-
-    st.pyplot(fig_cm)
-
-# ---------------- RIGHT: Insights ----------------
-with col_right:
+# -------- Insights --------
+with col2:
     c1, c2, c3 = st.columns(3)
 
-    c1.metric("✅ Correct", f"{correct}", f"{accuracy:.1%}")
-    c2.metric("📊 Total", f"{total}")
-    c3.metric("❌ Errors", f"{errors}", f"{(1-accuracy):.1%}")
+    c1.metric("Correct", int(correct))
+    c2.metric("Total", int(total))
+    c3.metric("Accuracy", f"{accuracy:.2%}")
 
-    st.progress(float(accuracy))
-
-    st.markdown("#### 📌 Class-wise Accuracy")
+    st.markdown("#### Class Accuracy")
 
     cols = st.columns(3)
     for i, col in enumerate(cols):
-        with col:
-            st.metric(
-                label=class_names[i],
-                value=f"{class_acc[i]:.1%}",
-                delta=f"{cm[i][i]} correct"
-            )
+        col.metric(class_names[i], f"{class_acc[i]:.2%}")
 # ══════════════════════════════════════════════════════════════════════════════
 # TAB 5 — COMPANY INSIGHTS
 # ══════════════════════════════════════════════════════════════════════════════

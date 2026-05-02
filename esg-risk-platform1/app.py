@@ -884,64 +884,34 @@ with tab4:
 
         st.markdown("### 🔲 Confusion Matrix")
 
-# Create a compact figure
-fig_cm, ax = plt.subplots(figsize=(1.6, 1.6))
+fig_cm, ax = plt.subplots(figsize=(3, 3))  # slightly bigger but cleaner
 
 sns.heatmap(
     r['confusion_matrix'],
     annot=True,
     fmt='d',
     cmap='Blues',
-    cbar=False,                     # remove color bar to save space
-    square=True,                   # keep it perfectly square
-    linewidths=0.5,                # subtle grid lines
-    annot_kws={"size": 7, "weight": "bold"},
-    xticklabels=["L", "M", "H"],   # shorter labels
-    yticklabels=["L", "M", "H"],
+    cbar=True,                      # keep color bar for clarity
+    square=True,
+    linewidths=1,
+    linecolor='white',
+    annot_kws={"size": 10, "weight": "bold"},
+    xticklabels=["Low", "Medium", "High"],
+    yticklabels=["Low", "Medium", "High"],
     ax=ax
 )
 
-# Minimal labels (small + clean)
-ax.set_xlabel("Pred", fontsize=7)
-ax.set_ylabel("Actual", fontsize=7)
-ax.tick_params(axis='both', labelsize=6)
+ax.set_xlabel("Predicted", fontsize=10)
+ax.set_ylabel("Actual", fontsize=10)
+ax.tick_params(axis='both', labelsize=9)
 
-plt.tight_layout(pad=0.3)
+plt.tight_layout()
 
-# Force smaller display width using columns
-col1, col2, col3 = st.columns([1, 1, 1])
-with col2:
-    st.pyplot(fig_cm, use_container_width=False)
+# 👇 THIS is the real fix (controls visual size nicely)
+col1, col2 = st.columns([2,1])
 
-
-# ------------------ Feature Importance ------------------
-
-if selected_eval == "Random Forest":
-    st.markdown("### 🌟 Feature Importance")
-
-    importance_df = pd.DataFrame({
-        'Feature': ['Environmental', 'Social', 'Governance'],
-        'Importance': r['model'].feature_importances_
-    }).sort_values('Importance', ascending=False)
-
-    fig_imp = px.bar(
-        importance_df,
-        x='Feature',
-        y='Importance',
-        color='Importance',
-        color_continuous_scale='Greens'
-    )
-
-    # Clean, minimal layout
-    fig_imp.update_layout(
-        height=300,
-        margin=dict(l=10, r=10, t=30, b=10),
-        title="",
-        xaxis_title="",
-        yaxis_title="Importance"
-    )
-
-    st.plotly_chart(fig_imp, use_container_width=True)
+with col1:
+    st.pyplot(fig_cm, use_container_width=True)
 # ══════════════════════════════════════════════════════════════════════════════
 # TAB 5 — COMPANY INSIGHTS
 # ══════════════════════════════════════════════════════════════════════════════

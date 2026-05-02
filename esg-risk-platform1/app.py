@@ -613,14 +613,8 @@ with tab1:
         # SECTION 1 — KPI SUMMARY CARDS
         # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         st.markdown("""
-        <div style='background:linear-gradient(135deg,#1a3c5e,#2ecc71);
-                    border-radius:12px;padding:12px 20px;margin-bottom:16px;'>
-            <h3 style='color:white;margin:0;font-size:1rem;letter-spacing:1px;'>
-                📊 SECTION 1 — KEY PERFORMANCE INDICATORS
-            </h3>
-            <p style='color:rgba(255,255,255,0.75);margin:2px 0 0;font-size:0.82rem;'>
-                High-level counts and average ESG score across the filtered dataset
-            </p>
+        <div style='border-left:4px solid #2ecc71;padding:4px 0 4px 14px;margin-bottom:16px;'>
+            <span style='font-size:1.05rem;font-weight:600;color:#1a3c5e;'>📊 Key Performance Indicators</span>
         </div>""", unsafe_allow_html=True)
 
         avg_esg = round(filtered_df['esg_score'].mean(), 1)
@@ -678,15 +672,8 @@ with tab1:
         # Right: Grouped bar — avg E / S / G score per risk tier
         # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         st.markdown("""
-        <div style='background:linear-gradient(135deg,#1a3c5e,#2ecc71);
-                    border-radius:12px;padding:12px 20px;margin-bottom:16px;'>
-            <h3 style='color:white;margin:0;font-size:1rem;letter-spacing:1px;'>
-                🍩 SECTION 2 — RISK OVERVIEW
-            </h3>
-            <p style='color:rgba(255,255,255,0.75);margin:2px 0 0;font-size:0.82rem;'>
-                Left: share of companies per risk tier &nbsp;|&nbsp;
-                Right: average E / S / G scores broken down by risk tier
-            </p>
+        <div style='border-left:4px solid #2980b9;padding:4px 0 4px 14px;margin-bottom:16px;'>
+            <span style='font-size:1.05rem;font-weight:600;color:#1a3c5e;'>🍩 Risk Overview</span>
         </div>""", unsafe_allow_html=True)
 
         col1, col2 = st.columns(2)
@@ -742,15 +729,8 @@ with tab1:
         # Right: Box plot — ESG score spread within each risk tier
         # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         st.markdown("""
-        <div style='background:linear-gradient(135deg,#1a3c5e,#2ecc71);
-                    border-radius:12px;padding:12px 20px;margin-bottom:16px;'>
-            <h3 style='color:white;margin:0;font-size:1rem;letter-spacing:1px;'>
-                🏆 SECTION 3 — COMPANY RANKINGS & SCORE SPREAD
-            </h3>
-            <p style='color:rgba(255,255,255,0.75);margin:2px 0 0;font-size:0.82rem;'>
-                Left: top 15 companies ranked by overall ESG score &nbsp;|&nbsp;
-                Right: score spread (min / median / max) within each risk tier
-            </p>
+        <div style='border-left:4px solid #f39c12;padding:4px 0 4px 14px;margin-bottom:16px;'>
+            <span style='font-size:1.05rem;font-weight:600;color:#1a3c5e;'>🏆 Company Rankings & Score Spread</span>
         </div>""", unsafe_allow_html=True)
 
         col1, col2 = st.columns(2)
@@ -798,15 +778,8 @@ with tab1:
         # Right: Grouped bar — avg E / S / G per company (top 10)
         # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         st.markdown("""
-        <div style='background:linear-gradient(135deg,#1a3c5e,#2ecc71);
-                    border-radius:12px;padding:12px 20px;margin-bottom:16px;'>
-            <h3 style='color:white;margin:0;font-size:1rem;letter-spacing:1px;'>
-                🔬 SECTION 4 — ESG PILLAR DEEP-DIVE
-            </h3>
-            <p style='color:rgba(255,255,255,0.75);margin:2px 0 0;font-size:0.82rem;'>
-                Left: relationship between Environmental and Social scores (bubble size = ESG score) &nbsp;|&nbsp;
-                Right: side-by-side E / S / G scores for the top 10 companies
-            </p>
+        <div style='border-left:4px solid #9b59b6;padding:4px 0 4px 14px;margin-bottom:16px;'>
+            <span style='font-size:1.05rem;font-weight:600;color:#1a3c5e;'>🔬 ESG Pillar Deep-Dive</span>
         </div>""", unsafe_allow_html=True)
 
         col1, col2 = st.columns(2)
@@ -864,15 +837,8 @@ with tab1:
         # Three histograms with distinct axis labels and descriptions
         # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         st.markdown("""
-        <div style='background:linear-gradient(135deg,#1a3c5e,#2ecc71);
-                    border-radius:12px;padding:12px 20px;margin-bottom:16px;'>
-            <h3 style='color:white;margin:0;font-size:1rem;letter-spacing:1px;'>
-                📈 SECTION 5 — PILLAR SCORE DISTRIBUTIONS
-            </h3>
-            <p style='color:rgba(255,255,255,0.75);margin:2px 0 0;font-size:0.82rem;'>
-                How individual Environmental, Social, and Governance scores are spread across all companies —
-                stacked by risk tier to reveal which tier drives each pillar
-            </p>
+        <div style='border-left:4px solid #27ae60;padding:4px 0 4px 14px;margin-bottom:16px;'>
+            <span style='font-size:1.05rem;font-weight:600;color:#1a3c5e;'>📈 Pillar Score Distributions</span>
         </div>""", unsafe_allow_html=True)
 
         col1, col2, col3 = st.columns(3)
@@ -922,14 +888,8 @@ with tab1:
         # SECTION 6 — TOP 10 SAFEST INVESTMENTS TABLE
         # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         st.markdown("""
-        <div style='background:linear-gradient(135deg,#1a3c5e,#2ecc71);
-                    border-radius:12px;padding:12px 20px;margin-bottom:16px;'>
-            <h3 style='color:white;margin:0;font-size:1rem;letter-spacing:1px;'>
-                🏅 SECTION 6 — TOP 10 SAFEST COMPANIES TO INVEST
-            </h3>
-            <p style='color:rgba(255,255,255,0.75);margin:2px 0 0;font-size:0.82rem;'>
-                Ranked by overall ESG score — darker green = higher score
-            </p>
+        <div style='border-left:4px solid #e74c3c;padding:4px 0 4px 14px;margin-bottom:16px;'>
+            <span style='font-size:1.05rem;font-weight:600;color:#1a3c5e;'>🏅 Top 10 Safest Companies to Invest</span>
         </div>""", unsafe_allow_html=True)
 
         top10 = filtered_df.nlargest(10, 'esg_score')[

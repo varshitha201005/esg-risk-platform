@@ -1021,35 +1021,242 @@ with tab3:
 # TAB 4 — MODEL EVALUATION
 # ══════════════════════════════════════════════════════════════════════════════
 with tab4:
-    st.subheader("📈 Model Evaluation")
+    st.markdown("""
+    <div style='border-left:4px solid #2980b9;padding:4px 0 4px 14px;margin-bottom:16px;'>
+        <span style='font-size:1.05rem;font-weight:600;color:#1a3c5e;'>📈 Model Evaluation & Performance</span>
+    </div>""", unsafe_allow_html=True)
+
     if len(df) < 5:
         st.warning("⚠️ Need at least 5 companies to evaluate models.")
     else:
         with st.spinner("Evaluating models..."):
             results, scaler = train_models(df)
 
-        selected_eval = st.selectbox("Select Model to Evaluate", list(results.keys()))
+        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        # MODEL SELECTOR
+        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        selected_eval = st.selectbox(
+            "🤖 Select Model to Evaluate",
+            list(results.keys()),
+            key="eval_model_select"
+        )
         r = results[selected_eval]
 
-        col1, col2, col3, col4 = st.columns(4)
-        col1.metric("Accuracy", f"{r['accuracy']:.2%}")
-        col2.metric("Precision", f"{r['precision']:.2%}")
-        col3.metric("Recall", f"{r['recall']:.2%}")
-        col4.metric("F1 Score", f"{r['f1']:.2%}")
+        st.markdown("<br>", unsafe_allow_html=True)
 
-    st.markdown("### Model Performance Overview")
+        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        # SECTION A — KPI METRIC CARDS
+        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        st.markdown("""
+        <div style='border-left:4px solid #2ecc71;padding:4px 0 4px 14px;margin-bottom:16px;'>
+            <span style='font-size:1rem;font-weight:600;color:#1a3c5e;'>🎯 Performance Metrics</span>
+        </div>""", unsafe_allow_html=True)
 
-    cm = np.array(r['confusion_matrix'])
+        cm = np.array(r['confusion_matrix'])
+        total  = int(cm.sum())
+        correct = int(np.trace(cm))
 
-    total = cm.sum()
-    correct = np.trace(cm)
-    accuracy = correct / total if total != 0 else 0
+        metrics = [
+            ("🎯 Accuracy",  r['accuracy'],  "#2ecc71", "Overall correct predictions"),
+            ("🔍 Precision", r['precision'], "#2980b9", "Positive prediction accuracy"),
+            ("📡 Recall",    r['recall'],    "#9b59b6", "True positive detection rate"),
+            ("⚖️ F1 Score",  r['f1'],        "#e67e22", "Harmonic mean of P & R"),
+        ]
 
-    col1, col2, col3 = st.columns(3)
+        cols = st.columns(4)
+        for col, (label, value, color, subtitle) in zip(cols, metrics):
+            with col:
+                st.markdown(f"""
+                <div style='background:white;border-radius:14px;padding:22px 18px;
+                            text-align:center;box-shadow:0 2px 10px rgba(0,0,0,0.07);
+                            border-top:4px solid {color};'>
+                    <p style='color:#888;font-size:0.8rem;margin:0 0 4px 0;'>{subtitle}</p>
+                    <h2 style='color:{color};margin:0;font-size:2rem;font-weight:700;'>
+                        {value:.1%}
+                    </h2>
+                    <p style='color:#1a3c5e;font-size:0.9rem;font-weight:600;margin:6px 0 0 0;'>
+                        {label}
+                    </p>
+                </div>""", unsafe_allow_html=True)
 
-    col1.metric("Correct Predictions", int(correct))
-    col2.metric("Total Samples", int(total))
-    col3.metric("Accuracy", f"{accuracy:.2%}")
+        st.markdown("<br>", unsafe_allow_html=True)
+
+        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        # SECTION B — CONFUSION MATRIX  |  ALL-MODELS RADAR
+        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        st.markdown("""
+        <div style='border-left:4px solid #9b59b6;padding:4px 0 4px 14px;margin-bottom:16px;'>
+            <span style='font-size:1rem;font-weight:600;color:#1a3c5e;'>🔢 Confusion Matrix & Model Radar</span>
+        </div>""", unsafe_allow_html=True)
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            risk_labels = ["Low Risk", "Medium Risk", "High Risk"]
+            n = cm.shape[0]
+            labels_used = risk_labels[:n]
+
+            fig_cm = go.Figure(data=go.Heatmap(
+                z=cm,
+                x=[f"Pred:<br>{l}" for l in labels_used],
+                y=[f"True:<br>{l}" for l in labels_used],
+                colorscale=[
+                    [0.0, "#eaf4fb"], [0.5, "#2980b9"], [1.0, "#1a3c5e"]
+                ],
+                text=cm,
+                texttemplate="<b>%{text}</b>",
+                textfont={"size": 18},
+                hoverongaps=False,
+                showscale=True,
+            ))
+            fig_cm.update_layout(
+                title=dict(
+                    text=f"Confusion Matrix — {selected_eval}",
+                    font_size=15
+                ),
+                paper_bgcolor='rgba(0,0,0,0)',
+                plot_bgcolor='rgba(0,0,0,0)',
+                xaxis=dict(title="Predicted Label", side="bottom"),
+                yaxis=dict(title="True Label", autorange="reversed"),
+                height=360,
+                margin=dict(l=20, r=20, t=50, b=20)
+            )
+            # diagonal highlight — green outline
+            for i in range(n):
+                fig_cm.add_shape(
+                    type="rect",
+                    x0=i - 0.5, x1=i + 0.5,
+                    y0=i - 0.5, y1=i + 0.5,
+                    line=dict(color="#2ecc71", width=3)
+                )
+            st.plotly_chart(fig_cm, use_container_width=True)
+
+            # summary pill below matrix
+            st.markdown(f"""
+            <div style='display:flex;gap:12px;justify-content:center;margin-top:-10px;'>
+                <div style='background:#eafaf1;border-radius:20px;padding:6px 18px;
+                            font-size:0.85rem;color:#27ae60;font-weight:600;'>
+                    ✅ Correct: {correct}
+                </div>
+                <div style='background:#fdedec;border-radius:20px;padding:6px 18px;
+                            font-size:0.85rem;color:#e74c3c;font-weight:600;'>
+                    ❌ Wrong: {total - correct}
+                </div>
+                <div style='background:#eaf4fb;border-radius:20px;padding:6px 18px;
+                            font-size:0.85rem;color:#2980b9;font-weight:600;'>
+                    📊 Total: {total}
+                </div>
+            </div>""", unsafe_allow_html=True)
+
+        with col2:
+            radar_metrics = ['Accuracy', 'Precision', 'Recall', 'F1 Score']
+            radar_colors  = ['#2ecc71', '#e74c3c', '#f39c12']
+
+            fig_radar = go.Figure()
+            for (name, res), color in zip(results.items(), radar_colors):
+                vals = [res['accuracy'], res['precision'], res['recall'], res['f1']]
+                vals += [vals[0]]   # close the loop
+                fig_radar.add_trace(go.Scatterpolar(
+                    r=vals,
+                    theta=radar_metrics + [radar_metrics[0]],
+                    fill='toself',
+                    name=name,
+                    line_color=color,
+                    fillcolor=color.replace(')', ',0.08)').replace('rgb', 'rgba') if 'rgb' in color else color + '15',
+                    opacity=0.85
+                ))
+            fig_radar.update_layout(
+                polar=dict(
+                    radialaxis=dict(
+                        visible=True, range=[0, 1],
+                        tickformat='.0%',
+                        gridcolor='rgba(0,0,0,0.08)'
+                    ),
+                    angularaxis=dict(gridcolor='rgba(0,0,0,0.08)')
+                ),
+                title=dict(text="All Models — Metric Radar", font_size=15),
+                paper_bgcolor='rgba(0,0,0,0)',
+                showlegend=True,
+                legend=dict(orientation='h', yanchor='bottom', y=-0.25, xanchor='center', x=0.5),
+                height=360,
+                margin=dict(l=20, r=20, t=50, b=60)
+            )
+            st.plotly_chart(fig_radar, use_container_width=True)
+
+        st.markdown("<hr style='border:1px solid #dce3ea;margin:8px 0 20px;'>", unsafe_allow_html=True)
+
+        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        # SECTION C — ALL-MODELS GROUPED BAR COMPARISON
+        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        st.markdown("""
+        <div style='border-left:4px solid #e67e22;padding:4px 0 4px 14px;margin-bottom:16px;'>
+            <span style='font-size:1rem;font-weight:600;color:#1a3c5e;'>📊 All Models — Side-by-Side Comparison</span>
+        </div>""", unsafe_allow_html=True)
+
+        perf_df = pd.DataFrame([
+            {
+                "Model":     name,
+                "Accuracy":  round(res['accuracy'],  3),
+                "Precision": round(res['precision'], 3),
+                "Recall":    round(res['recall'],    3),
+                "F1 Score":  round(res['f1'],        3),
+            }
+            for name, res in results.items()
+        ])
+
+        fig_bar = px.bar(
+            perf_df.melt(id_vars='Model', var_name='Metric', value_name='Score'),
+            x='Metric', y='Score', color='Model',
+            barmode='group',
+            text_auto='.1%',
+            color_discrete_sequence=['#2ecc71', '#e74c3c', '#f39c12'],
+            title='Accuracy · Precision · Recall · F1 — All Models',
+        )
+        fig_bar.update_traces(textposition='outside', textfont_size=11)
+        fig_bar.update_layout(
+            paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+            yaxis=dict(range=[0, 1.15], tickformat='.0%',
+                       gridcolor='rgba(0,0,0,0.05)', title='Score'),
+            xaxis_title='',
+            legend_title='Model',
+            title_font_size=15,
+            uniformtext_minsize=8, uniformtext_mode='hide',
+            margin=dict(t=50, b=20)
+        )
+        st.plotly_chart(fig_bar, use_container_width=True)
+
+        st.markdown("<hr style='border:1px solid #dce3ea;margin:8px 0 20px;'>", unsafe_allow_html=True)
+
+        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        # SECTION D — STYLED SUMMARY TABLE
+        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        st.markdown("""
+        <div style='border-left:4px solid #1a3c5e;padding:4px 0 4px 14px;margin-bottom:16px;'>
+            <span style='font-size:1rem;font-weight:600;color:#1a3c5e;'>🏅 Model Leaderboard</span>
+        </div>""", unsafe_allow_html=True)
+
+        best_model = perf_df.loc[perf_df['F1 Score'].idxmax(), 'Model']
+        st.markdown(f"""
+        <div style='background:linear-gradient(135deg,#eafaf1,#d5f5e3);
+                    border-radius:12px;padding:14px 20px;margin-bottom:16px;
+                    border-left:4px solid #2ecc71;'>
+            🏆 <strong>Best Model:</strong> {best_model} —
+            highest F1 Score of
+            <strong>{perf_df.loc[perf_df['F1 Score'].idxmax(), 'F1 Score']:.1%}</strong>
+        </div>""", unsafe_allow_html=True)
+
+        st.dataframe(
+            perf_df.style
+                .format({"Accuracy": "{:.1%}", "Precision": "{:.1%}",
+                         "Recall": "{:.1%}", "F1 Score": "{:.1%}"})
+                .background_gradient(subset=["Accuracy", "Precision", "Recall", "F1 Score"],
+                                     cmap="Greens")
+                .set_properties(**{'text-align': 'center'})
+                .highlight_max(subset=["Accuracy", "Precision", "Recall", "F1 Score"],
+                               color="#d5f5e3"),
+            use_container_width=True,
+            hide_index=True
+        )
 
 # ══════════════════════════════════════════════════════════════════════════════
 # TAB 5 — COMPANY INSIGHTS

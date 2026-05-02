@@ -1081,7 +1081,7 @@ with tab4:
 
         st.markdown("<br>", unsafe_allow_html=True)
 
-        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         # SECTION B — CONFUSION MATRIX  |  ALL-MODELS RADAR
         # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         st.markdown("""
@@ -1121,7 +1121,6 @@ with tab4:
                 height=360,
                 margin=dict(l=20, r=20, t=50, b=20)
             )
-            # diagonal highlight — green outline
             for i in range(n):
                 fig_cm.add_shape(
                     type="rect",
@@ -1131,7 +1130,6 @@ with tab4:
                 )
             st.plotly_chart(fig_cm, use_container_width=True)
 
-            # summary pill below matrix
             st.markdown(f"""
             <div style='display:flex;gap:12px;justify-content:center;margin-top:-10px;'>
                 <div style='background:#eafaf1;border-radius:20px;padding:6px 18px;
@@ -1150,19 +1148,23 @@ with tab4:
 
         with col2:
             radar_metrics = ['Accuracy', 'Precision', 'Recall', 'F1 Score']
-            radar_colors  = ['#2ecc71', '#e74c3c', '#f39c12']
+            radar_colors = [
+                ('#2ecc71', 'rgba(46,204,113,0.12)'),
+                ('#e74c3c', 'rgba(231,76,60,0.12)'),
+                ('#f39c12', 'rgba(243,156,18,0.12)'),
+            ]
 
             fig_radar = go.Figure()
-            for (name, res), color in zip(results.items(), radar_colors):
+            for (name, res), (line_color, fill_color) in zip(results.items(), radar_colors):
                 vals = [res['accuracy'], res['precision'], res['recall'], res['f1']]
-                vals += [vals[0]]   # close the loop
+                vals += [vals[0]]
                 fig_radar.add_trace(go.Scatterpolar(
                     r=vals,
                     theta=radar_metrics + [radar_metrics[0]],
                     fill='toself',
                     name=name,
-                    line_color=color,
-                    fillcolor=color.replace(')', ',0.08)').replace('rgb', 'rgba') if 'rgb' in color else color + '15',
+                    line_color=line_color,
+                    fillcolor=fill_color,
                     opacity=0.85
                 ))
             fig_radar.update_layout(
@@ -1177,14 +1179,16 @@ with tab4:
                 title=dict(text="All Models — Metric Radar", font_size=15),
                 paper_bgcolor='rgba(0,0,0,0)',
                 showlegend=True,
-                legend=dict(orientation='h', yanchor='bottom', y=-0.25, xanchor='center', x=0.5),
+                legend=dict(
+                    orientation='h', yanchor='bottom',
+                    y=-0.25, xanchor='center', x=0.5
+                ),
                 height=360,
                 margin=dict(l=20, r=20, t=50, b=60)
             )
             st.plotly_chart(fig_radar, use_container_width=True)
 
         st.markdown("<hr style='border:1px solid #dce3ea;margin:8px 0 20px;'>", unsafe_allow_html=True)
-
         # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         # SECTION C — ALL-MODELS GROUPED BAR COMPARISON
         # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

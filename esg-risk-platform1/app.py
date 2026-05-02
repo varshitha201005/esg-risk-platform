@@ -1057,10 +1057,10 @@ with tab4:
         correct = int(np.trace(cm))
 
         metrics = [
-            ("🎯 Accuracy",  r['accuracy'],  "#2ecc71", "Overall correct predictions"),
-            ("🔍 Precision", r['precision'], "#2980b9", "Positive prediction accuracy"),
-            ("📡 Recall",    r['recall'],    "#9b59b6", "True positive detection rate"),
-            ("⚖️ F1 Score",  r['f1'],        "#e67e22", "Harmonic mean of P & R"),
+            ("🎯 Accuracy",  r['accuracy'],  "#2ecc71"),
+            ("🔍 Precision", r['precision'], "#2980b9"),
+            ("📡 Recall",    r['recall'],    "#9b59b6"),
+            ("⚖️ F1 Score",  r['f1'],        "#e67e22"),
         ]
 
         cols = st.columns(4)

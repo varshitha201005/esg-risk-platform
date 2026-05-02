@@ -19,6 +19,12 @@ import os
 import io
 warnings.filterwarnings('ignore')
 
+# ─── Page Config ───────────────────────────────────────────────────────────────
+st.set_page_config(
+    page_title="TripleLens - ESG Risk Analysis Platform",
+    page_icon="🌿",
+    layout="wide"
+)
 
 # ─── Custom CSS ────────────────────────────────────────────────────────────────
 st.markdown("""

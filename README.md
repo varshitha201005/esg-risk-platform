@@ -113,6 +113,8 @@ An Android APK is available that wraps the web app in a native Android shell.
 ---
 
 ## 📂 Project Structure
+
+```
 esg-risk-platform/
 ├── esg-risk-platform1/
 │   ├── app.py              # Main Streamlit application
@@ -121,9 +123,10 @@ esg-risk-platform/
 │   ├── users.json          # User database
 │   └── README.md           # Project documentation
 └── esg-risk-platform/
-└── backend/
-├── app.py          # Flask backend (initial version)
-└── esg_data.csv    # Sample dataset
+    └── backend/
+        ├── app.py          # Flask backend (initial version)
+        └── esg_data.csv    # Sample dataset
+```
 ---
 
 ## 🎯 ESG Scoring Formula

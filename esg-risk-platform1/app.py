@@ -882,21 +882,15 @@ with tab4:
         col3.metric("Recall", f"{r['recall']:.2%}")
         col4.metric("F1 Score", f"{r['f1']:.2%}")
 
-        st.markdown("### 🔲 Confusion Matrix")
+    st.markdown("### 🔲 Confusion Summary")
 
 cm = r['confusion_matrix']
 
-cm_df = pd.DataFrame(
-    cm,
-    columns=["Pred: Low", "Pred: Med", "Pred: High"],
-    index=["Act: Low", "Act: Med", "Act: High"]
-)
+col1, col2, col3 = st.columns(3)
 
-st.dataframe(
-    cm_df,
-    use_container_width=False,
-    height=150
-)
+col1.metric("Correct Predictions", int(cm.trace()))
+col2.metric("Total Samples", int(cm.sum()))
+col3.metric("Accuracy", f"{(cm.trace()/cm.sum()):.2%}")
 # ══════════════════════════════════════════════════════════════════════════════
 # TAB 5 — COMPANY INSIGHTS
 # ══════════════════════════════════════════════════════════════════════════════

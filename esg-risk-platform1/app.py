@@ -522,9 +522,14 @@ def train_models(df):
     return results, scaler
 
 # ─── Sidebar ───────────────────────────────────────────────────────────────────
-try:
-    st.sidebar.image("esg_logo.png", use_container_width=True)
-except:
+import os
+logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "esg_logo.png")
+if os.path.exists(logo_path):
+    try:
+        st.sidebar.image(logo_path, use_container_width=True)
+    except:
+        st.sidebar.markdown("### 🌿 TripleLens")
+else:
     st.sidebar.markdown("### 🌿 TripleLens")
 
 st.sidebar.title("TripleLens")

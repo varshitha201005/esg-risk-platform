@@ -884,34 +884,19 @@ with tab4:
 
         st.markdown("### 🔲 Confusion Matrix")
 
-fig_cm, ax = plt.subplots(figsize=(3, 3))  # slightly bigger but cleaner
+cm = r['confusion_matrix']
 
-sns.heatmap(
-    r['confusion_matrix'],
-    annot=True,
-    fmt='d',
-    cmap='Blues',
-    cbar=True,                      # keep color bar for clarity
-    square=True,
-    linewidths=1,
-    linecolor='white',
-    annot_kws={"size": 10, "weight": "bold"},
-    xticklabels=["Low", "Medium", "High"],
-    yticklabels=["Low", "Medium", "High"],
-    ax=ax
+cm_df = pd.DataFrame(
+    cm,
+    columns=["Pred: Low", "Pred: Med", "Pred: High"],
+    index=["Act: Low", "Act: Med", "Act: High"]
 )
 
-ax.set_xlabel("Predicted", fontsize=10)
-ax.set_ylabel("Actual", fontsize=10)
-ax.tick_params(axis='both', labelsize=9)
-
-plt.tight_layout()
-
-# 👇 THIS is the real fix (controls visual size nicely)
-col1, col2 = st.columns([2,1])
-
-with col1:
-    st.pyplot(fig_cm, use_container_width=True)
+st.dataframe(
+    cm_df,
+    use_container_width=False,
+    height=150
+)
 # ══════════════════════════════════════════════════════════════════════════════
 # TAB 5 — COMPANY INSIGHTS
 # ══════════════════════════════════════════════════════════════════════════════

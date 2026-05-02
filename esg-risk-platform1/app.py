@@ -882,67 +882,37 @@ with tab4:
         col3.metric("Recall", f"{r['recall']:.2%}")
         col4.metric("F1 Score", f"{r['f1']:.2%}")
 
-st.markdown("### 🔲 Confusion Analysis")
+st.markdown("### 🔲 Model Performance Overview")
 
 import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
 
-# ✅ Force proper format
-cm = np.array(r.get('confusion_matrix', [[0,0,0],[0,0,0],[0,0,0]]))
+cm = np.array(r['confusion_matrix'])
 
-# ✅ Safe calculations
 total = cm.sum()
 correct = np.trace(cm)
 accuracy = correct / total if total != 0 else 0
 
-class_names = ["Low", "Medium", "High"]
+col1, col2, col3 = st.columns(3)
 
-# ✅ Safe class accuracy
-row_sums = cm.sum(axis=1)
-class_acc = [
-    (cm[i][i] / row_sums[i]) if row_sums[i] != 0 else 0
-    for i in range(len(class_names))
-]
+col1.metric(
+    "✅ Correct Predictions",
+    f"{correct}",
+    f"{accuracy:.1%}"
+)
 
-# Layout
-col1, col2 = st.columns([1, 2])
+col2.metric(
+    "📊 Total Samples",
+    f"{total}"
+)
 
-# Matrix
-with col1:
-    fig, ax = plt.subplots(figsize=(2.5, 2.2))
+col3.metric(
+    "❌ Errors",
+    f"{total - correct}",
+    f"{(1 - accuracy):.1%}"
+)
 
-    sns.heatmap(
-        cm,
-        annot=True,
-        fmt='d',
-        cmap='Blues',
-        cbar=False,
-        square=True,
-        xticklabels=["L", "M", "H"],
-        yticklabels=["L", "M", "H"],
-        ax=ax
-    )
-
-    ax.set_xlabel("")
-    ax.set_ylabel("")
-    plt.tight_layout()
-
-    st.pyplot(fig)
-
-# Insights
-with col2:
-    c1, c2, c3 = st.columns(3)
-
-    c1.metric("Correct", int(correct))
-    c2.metric("Total", int(total))
-    c3.metric("Accuracy", f"{accuracy:.2%}")
-
-    st.markdown("#### Class Accuracy")
-
-    cols = st.columns(3)
-    for i, col in enumerate(cols):
-        col.metric(class_names[i], f"{class_acc[i]:.2%}")
+# subtle visual enhancement
+st.progress(float(accuracy))
 # ══════════════════════════════════════════════════════════════════════════════
 # TAB 5 — COMPANY INSIGHTS
 # ══════════════════════════════════════════════════════════════════════════════

@@ -19,12 +19,6 @@ import os
 import io
 warnings.filterwarnings('ignore')
 
-# ─── Page Config ───────────────────────────────────────────────────────────────
-st.set_page_config(
-    page_title="TripleLens - ESG Risk Analysis Platform",
-    page_icon="🌿",
-    layout="wide"
-)
 
 # ─── Custom CSS ────────────────────────────────────────────────────────────────
 st.markdown("""
@@ -2191,7 +2185,7 @@ with tab6:
             )
 
         with col3:
-            st.markdown("#### 📑 Excel Export (Multi-Sheet)")
+            st.markdown("#### 📑 Excel Export ")
             st.markdown("Separate sheets per risk tier + summary.")
             if st.button("📑 Generate Excel"):
                 with st.spinner("Building Excel workbook..."):

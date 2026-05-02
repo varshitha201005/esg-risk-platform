@@ -686,7 +686,7 @@ with tab1:
             )
             fig_pie.update_layout(
                 paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
-                legend=dict(orientation="h", yanchor="top right", y=-0.25),
+                legend=dict(orientation="h", yanchor="bottom", y=-0.25),
                 title_font_size=15, margin=dict(t=50, b=60)
             )
             fig_pie.update_traces(textposition='inside', textinfo='percent+label')

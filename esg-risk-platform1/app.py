@@ -104,6 +104,21 @@ st.markdown("""
         border-radius: 8px !important;
         border: none !important;
     }
+    [data-testid="stSidebar"] .stFileUploader label {
+        color: white !important;
+    }
+    [data-testid="stSidebar"] .stFileUploader span {
+        color: white !important;
+    }
+    [data-testid="stSidebar"] .stFileUploader small {
+        color: rgba(255,255,255,0.7) !important;
+    }
+    [data-testid="stSidebar"] [data-testid="stFileUploaderFileName"] {
+        color: white !important;
+        background: rgba(255,255,255,0.1) !important;
+        border-radius: 6px !important;
+        padding: 4px 8px !important;
+    }
     [data-testid="stSidebar"] .stSelectbox > div > div {
         background: rgba(255,255,255,0.1) !important;
         border: 1px solid rgba(255,255,255,0.2) !important;

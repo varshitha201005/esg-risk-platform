@@ -121,18 +121,61 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ─── User Database ─────────────────────────────────────────────────────────────
-USERS_FILE = "users.json"
+# ─── Google Sheets Database ────────────────────────────────────────────────────
+import gspread
+from google.oauth2.service_account import Credentials
+import json
+
+SHEET_ID = "14mNcMsMQO0EKIDHZ1IE0Adv8_toRPB8xTeVOb_WTDVI"
+
+@st.cache_resource
+def get_sheet():
+    try:
+        scopes = [
+            "https://www.googleapis.com/auth/spreadsheets",
+            "https://www.googleapis.com/auth/drive"
+        ]
+        # Try Streamlit secrets first (cloud deployment)
+        if "GOOGLE_CREDENTIALS" in st.secrets:
+            creds_dict = json.loads(st.secrets["GOOGLE_CREDENTIALS"])
+            creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
+        else:
+            # Fallback to local credentials.json
+            creds = Credentials.from_service_account_file("credentials.json", scopes=scopes)
+        client = gspread.authorize(creds)
+        sheet = client.open_by_key(SHEET_ID).sheet1
+        return sheet
+    except Exception as e:
+        st.error(f"❌ Could not connect to database: {e}")
+        return None
 
 def load_users():
-    if os.path.exists(USERS_FILE):
-        with open(USERS_FILE, "r") as f:
-            return json.load(f)
-    return {}
+    sheet = get_sheet()
+    if sheet is None:
+        return {}
+    try:
+        records = sheet.get_all_records()
+        users = {}
+        for record in records:
+            if record.get('username'):
+                users[record['username']] = {
+                    "name": record.get('name', ''),
+                    "email": record.get('email', ''),
+                    "password": record.get('password', '')
+                }
+        return users
+    except Exception:
+        return {}
 
-def save_users(users):
-    with open(USERS_FILE, "w") as f:
-        json.dump(users, f)
+def save_user_to_sheet(username, name, email, hashed_password):
+    sheet = get_sheet()
+    if sheet is None:
+        return False
+    try:
+        sheet.append_row([username, name, email, hashed_password])
+        return True
+    except Exception:
+        return False
 
 def hash_password(password):
     return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
@@ -146,25 +189,17 @@ def register_user(username, email, password, name):
         return False, "Username already exists!"
     if any(u['email'] == email for u in users.values()):
         return False, "Email already registered!"
-    users[username] = {
-        "name": name,
-        "email": email,
-        "password": hash_password(password),
-        "created_at": pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S'),
-        "last_login": pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S'),
-        "analyses_run": 0
-    }
-    save_users(users)
-    return True, "Account created successfully!"
+    hashed = hash_password(password)
+    success = save_user_to_sheet(username, name, email, hashed)
+    if success:
+        return True, "Account created successfully!"
+    return False, "Could not save user. Please try again."
 
 def login_user(username, password):
     users = load_users()
     if username not in users:
         return False, "Username not found!"
     if verify_password(password, users[username]['password']):
-        users[username]['last_login'] = pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S')
-        users[username].setdefault('analyses_run', 0)
-        save_users(users)
         return True, users[username]['name']
     return False, "Incorrect password!"
 

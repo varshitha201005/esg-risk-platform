@@ -9,3 +9,6 @@ fpdf2
 streamlit-authenticator
 bcrypt
 Pillow
+openpyxl
+gspread
+google-auth

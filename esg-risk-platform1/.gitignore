@@ -6,3 +6,5 @@ __pycache__/
 *.docx
 desktop.ini
 ~$*
+credentials.json
+users.json

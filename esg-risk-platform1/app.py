@@ -144,13 +144,27 @@ st.markdown("""
         color: white !important;
         border-radius: 8px;
     }
-    .main-header {
+.main-header {
         background: linear-gradient(135deg, #1a3c5e 0%, #2ecc71 100%);
         padding: 30px 40px;
         border-radius: 16px;
         margin-bottom: 24px;
         color: white;
         box-shadow: 0 8px 30px rgba(26, 60, 94, 0.3);
+    }
+    [data-testid="stSidebar"] [data-testid="stFileUploaderFile"] {
+        background: rgba(26, 60, 94, 0.8) !important;
+        border-radius: 6px !important;
+    }
+    [data-testid="stSidebar"] [data-testid="stFileUploaderFile"] * {
+        color: white !important;
+    }
+    [data-testid="stSidebar"] [data-testid="stFileUploaderDropzone"] {
+        background: rgba(255,255,255,0.05) !important;
+        border: 1px dashed rgba(255,255,255,0.3) !important;
+    }
+    [data-testid="stSidebar"] [data-testid="stFileUploaderDropzone"] * {
+        color: white !important;
     }
 </style>
 """, unsafe_allow_html=True)

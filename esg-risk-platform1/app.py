@@ -113,11 +113,30 @@ st.markdown("""
     [data-testid="stSidebar"] .stFileUploader small {
         color: rgba(255,255,255,0.7) !important;
     }
-    [data-testid="stSidebar"] [data-testid="stFileUploaderFileName"] {
+[data-testid="stSidebar"] [data-testid="stFileUploaderFileName"] {
         color: white !important;
         background: rgba(255,255,255,0.1) !important;
         border-radius: 6px !important;
         padding: 4px 8px !important;
+    }
+    [data-testid="stSidebar"] .stFileUploader p {
+        color: white !important;
+    }
+    [data-testid="stSidebar"] .stFileUploader div {
+        color: white !important;
+    }
+    [data-testid="stSidebar"] .stFileUploader [data-testid="stMarkdownContainer"] p {
+        color: white !important;
+    }
+    [data-testid="stSidebar"] section[data-testid="stFileUploaderDropzone"] {
+        background: rgba(255,255,255,0.1) !important;
+    }
+    [data-testid="stSidebar"] [class*="uploadedFile"] {
+        color: white !important;
+        background: rgba(255,255,255,0.15) !important;
+    }
+    [data-testid="stSidebar"] [class*="fileName"] {
+        color: white !important;
     }
     [data-testid="stSidebar"] .stSelectbox > div > div {
         background: rgba(255,255,255,0.1) !important;

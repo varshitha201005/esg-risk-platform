@@ -9,7 +9,6 @@ from sklearn.metrics import (accuracy_score, precision_score, recall_score,
                              f1_score, confusion_matrix,
                              precision_recall_fscore_support)
 from sklearn.inspection import permutation_importance
-from fpdf import FPDF
 import plotly.express as px
 import plotly.graph_objects as go
 import warnings
@@ -543,118 +542,6 @@ def train_models(df_json):
         }
     return results, scaler
 
-# ─── PDF Generation ────────────────────────────────────────────────────────────
-def generate_pdf(df, filtered_df):
-    pdf = FPDF()
-    pdf.set_auto_page_break(auto=True, margin=15)
-    pdf.add_page()
-    pdf.set_fill_color(26, 60, 94)
-    pdf.rect(0, 0, 210, 60, 'F')
-    pdf.set_text_color(255, 255, 255)
-    pdf.set_font("Helvetica", "B", 24)
-    pdf.set_y(15)
-    pdf.cell(0, 10, "TripleLens - ESG Risk Analysis Platform", ln=True, align='C')
-    pdf.set_font("Helvetica", "", 14)
-    pdf.cell(0, 10, "Investment Risk Analysis Report", ln=True, align='C')
-    pdf.set_font("Helvetica", "", 11)
-    pdf.cell(0, 10, f"Generated: {pd.Timestamp.now().strftime('%B %d, %Y')}", ln=True, align='C')
-    pdf.set_text_color(0, 0, 0)
-    pdf.set_y(75)
-    pdf.set_font("Helvetica", "B", 16)
-    pdf.set_text_color(26, 60, 94)
-    pdf.cell(0, 10, "Executive Summary", ln=True)
-    pdf.set_draw_color(46, 204, 113)
-    pdf.set_line_width(0.8)
-    pdf.line(10, pdf.get_y(), 200, pdf.get_y())
-    pdf.ln(4)
-    total    = len(filtered_df)
-    low      = len(filtered_df[filtered_df['risk_label'] == 'Low Risk'])
-    med      = len(filtered_df[filtered_df['risk_label'] == 'Medium Risk'])
-    high     = len(filtered_df[filtered_df['risk_label'] == 'High Risk'])
-    avg_score = round(filtered_df['esg_score'].mean(), 1)
-    best_co  = filtered_df.loc[filtered_df['esg_score'].idxmax(), 'company']
-    pdf.set_font("Helvetica", "", 11)
-    pdf.set_text_color(0, 0, 0)
-    for label, value in [
-        ("Total Companies Analyzed", str(total)),
-        ("Average ESG Score",        str(avg_score)),
-        ("Best ESG Company",         str(best_co)),
-        ("Safe Investments (Low Risk)", str(low)),
-        ("Moderate Risk Companies",  str(med)),
-        ("High Risk Companies",      str(high)),
-    ]:
-        pdf.set_font("Helvetica", "B", 11)
-        pdf.cell(100, 8, label + ":", ln=False)
-        pdf.set_font("Helvetica", "", 11)
-        pdf.cell(0, 8, value, ln=True)
-    pdf.ln(5)
-    # risk distribution table
-    pdf.set_font("Helvetica", "B", 16)
-    pdf.set_text_color(26, 60, 94)
-    pdf.cell(0, 10, "Risk Distribution", ln=True)
-    pdf.set_draw_color(46, 204, 113)
-    pdf.line(10, pdf.get_y(), 200, pdf.get_y())
-    pdf.ln(4)
-    risk_colors_pdf = {
-        "Low Risk":    (46,  204, 113),
-        "Medium Risk": (243, 156, 18),
-        "High Risk":   (231, 76,  60)
-    }
-    pdf.set_fill_color(26, 60, 94)
-    pdf.set_text_color(255, 255, 255)
-    pdf.set_font("Helvetica", "B", 11)
-    for hdr, w in [("Risk Level",60),("Companies",40),("Percentage",40),("Avg ESG",50)]:
-        pdf.cell(w, 9, hdr, border=1, fill=True, align='C')
-    pdf.ln()
-    pdf.set_font("Helvetica", "", 11)
-    for risk, color in risk_colors_pdf.items():
-        count = len(filtered_df[filtered_df['risk_label'] == risk])
-        pct   = round(count / total * 100, 1) if total > 0 else 0
-        avg   = round(filtered_df[filtered_df['risk_label'] == risk]['esg_score'].mean(), 1) if count > 0 else 0
-        pdf.set_fill_color(*color)
-        pdf.set_text_color(255, 255, 255)
-        pdf.cell(60, 8, risk, border=1, fill=True, align='C')
-        pdf.set_fill_color(245, 245, 245)
-        pdf.set_text_color(0, 0, 0)
-        pdf.cell(40, 8, str(count),    border=1, fill=True, align='C')
-        pdf.cell(40, 8, f"{pct}%",     border=1, fill=True, align='C')
-        pdf.cell(50, 8, str(avg),      border=1, fill=True, align='C')
-        pdf.ln()
-    # company table
-    pdf.add_page()
-    pdf.set_font("Helvetica", "B", 16)
-    pdf.set_text_color(26, 60, 94)
-    pdf.cell(0, 10, "Company-wise ESG Analysis", ln=True)
-    pdf.set_draw_color(46, 204, 113)
-    pdf.line(10, pdf.get_y(), 200, pdf.get_y())
-    pdf.ln(4)
-    pdf.set_fill_color(26, 60, 94)
-    pdf.set_text_color(255, 255, 255)
-    pdf.set_font("Helvetica", "B", 9)
-    for hdr, w in [("Company",50),("Env",25),("Soc",25),("Gov",25),("ESG",25),("Risk",40)]:
-        pdf.cell(w, 9, hdr, border=1, fill=True, align='C')
-    pdf.ln()
-    pdf.set_font("Helvetica", "", 9)
-    for i, (_, row) in enumerate(
-        filtered_df.sort_values('esg_score', ascending=False).iterrows()
-    ):
-        pdf.set_fill_color(245,245,245) if i%2==0 else pdf.set_fill_color(255,255,255)
-        pdf.set_text_color(0, 0, 0)
-        pdf.cell(50, 8, str(row['company'])[:20], border=1, fill=True)
-        pdf.cell(25, 8, str(round(row['environmental_score'],1)), border=1, fill=True, align='C')
-        pdf.cell(25, 8, str(round(row['social_score'],1)),        border=1, fill=True, align='C')
-        pdf.cell(25, 8, str(round(row['governance_score'],1)),    border=1, fill=True, align='C')
-        pdf.cell(25, 8, str(row['esg_score']),                    border=1, fill=True, align='C')
-        pdf.set_fill_color(*risk_colors_pdf.get(row['risk_label'], (128,128,128)))
-        pdf.set_text_color(255, 255, 255)
-        pdf.cell(40, 8, row['risk_label'], border=1, fill=True, align='C')
-        pdf.set_text_color(0, 0, 0)
-        pdf.ln()
-    pdf.set_y(-20)
-    pdf.set_font("Helvetica", "I", 8)
-    pdf.set_text_color(128, 128, 128)
-    pdf.cell(0, 10, "Generated by TripleLens - ESG Risk Analysis Platform | Confidential", align='C')
-    return bytes(pdf.output())
 
 # ─── Sidebar ───────────────────────────────────────────────────────────────────
 logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "esg_logo.png")

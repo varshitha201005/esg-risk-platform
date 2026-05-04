@@ -113,7 +113,7 @@ st.markdown("""
     [data-testid="stSidebar"] .stFileUploader small {
         color: rgba(255,255,255,0.7) !important;
     }
-[data-testid="stSidebar"] [data-testid="stFileUploaderFileName"] {
+    [data-testid="stSidebar"] [data-testid="stFileUploaderFileName"] {
         color: white !important;
         background: rgba(255,255,255,0.1) !important;
         border-radius: 6px !important;
@@ -673,7 +673,17 @@ st.sidebar.markdown("---")
 
 # ── Data Upload ──
 st.sidebar.markdown("**📁 Data**")
-uploaded_file = st.sidebar.file_uploader("Upload ESG Dataset (CSV)", type=["csv"])
+uploaded_file = st.sidebar.file_uploader("📁 Upload ESG Dataset (CSV)", type=["csv"])
+if uploaded_file is not None:
+    st.sidebar.markdown(f"""
+    <div style='background: rgba(46,204,113,0.2); border-radius: 8px; 
+                padding: 8px 12px; border: 1px solid #2ecc71; margin-top: 5px;'>
+        <p style='color: white; margin: 0; font-size: 0.85rem;'>
+            ✅ <strong>{uploaded_file.name}</strong><br/>
+            <span style='opacity: 0.7; font-size: 0.75rem;'>{round(uploaded_file.size/1024, 1)} KB</span>
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
 st.sidebar.markdown("---")
 
 # ── Model ──

@@ -672,7 +672,6 @@ st.sidebar.markdown(f"👤 Welcome, **{st.session_state.name}**!")
 st.sidebar.markdown("---")
 
 # ── Data Upload ──
-st.sidebar.markdown("**📁 Data**")
 uploaded_file = st.sidebar.file_uploader("📁 Upload ESG Dataset (CSV)", type=["csv"])
 if uploaded_file is not None:
     st.sidebar.markdown(f"""

@@ -2170,7 +2170,7 @@ with tab6:
                              len(filtered_df[filtered_df['risk_label']=='High Risk']))
 
         if len(filtered_df) < 5:
-            st.warning(f"⚠️ Only {len(filtered_df)} companies in current filter — "
+            st.warning(f"⚠️ Only {len(filtered_df)} companies in current filter - "
                        "the exported report will be sparse. Consider widening filters.")
 
         st.markdown("### 🔍 Data to be Exported")

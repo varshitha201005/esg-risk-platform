@@ -679,7 +679,7 @@ if uploaded_file is not None:
     <div style='background: rgba(46,204,113,0.2); border-radius: 8px; 
                 padding: 8px 12px; border: 1px solid #2ecc71; margin-top: 5px;'>
         <p style='color: white; margin: 0; font-size: 0.85rem;'>
-            ✅ <strong>{uploaded_file.name}</strong><br/>
+            ✅ <strong>{uploaded_file.name}is uploaded </strong><br/>
             <span style='opacity: 0.7; font-size: 0.75rem;'>{round(uploaded_file.size/1024, 1)} KB</span>
         </p>
     </div>

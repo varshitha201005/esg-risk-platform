@@ -2140,7 +2140,7 @@ with tab5:
                 )
 
 # ══════════════════════════════════════════════════════════════════════════════
-# TAB 6 - EXPORT REPORT
+# TAB 6 — EXPORT REPORT
 # ══════════════════════════════════════════════════════════════════════════════
 with tab6:
     st.markdown("""
@@ -2163,19 +2163,16 @@ with tab6:
     else:
         col1, col2, col3, col4 = st.columns(4)
         with col1: st.metric("Total Companies", len(filtered_df))
-        with col2: st.metric("Avg ESG Score",   round(filtered_df['esg_score'].mean(),1))
-        with col3: st.metric("✅ Low Risk",
-                             len(filtered_df[filtered_df['risk_label']=='Low Risk']))
-        with col4: st.metric("🚨 High Risk",
-                             len(filtered_df[filtered_df['risk_label']=='High Risk']))
+        with col2: st.metric("Avg ESG Score", round(filtered_df['esg_score'].mean(), 1))
+        with col3: st.metric("✅ Low Risk", len(filtered_df[filtered_df['risk_label'] == 'Low Risk']))
+        with col4: st.metric("🚨 High Risk", len(filtered_df[filtered_df['risk_label'] == 'High Risk']))
 
         if len(filtered_df) < 5:
-            st.warning(f"⚠️ Only {len(filtered_df)} companies in current filter - "
-                       "the exported report will be sparse. Consider widening filters.")
+            st.warning(f"⚠️ Only {len(filtered_df)} companies in current filter. Consider widening filters.")
 
         st.markdown("### 🔍 Data to be Exported")
-        export_cols = ['company','sector','environmental_score','social_score',
-                       'governance_score','esg_score','risk_label']
+        export_cols = ['company', 'sector', 'environmental_score', 'social_score',
+                       'governance_score', 'esg_score', 'risk_label']
         export_cols = [c for c in export_cols if c in filtered_df.columns]
         st.dataframe(
             filtered_df[export_cols]
@@ -2185,23 +2182,9 @@ with tab6:
         )
 
         st.markdown("---")
-        col1, col2, col3 = st.columns(3)
+        col1, col2 = st.columns(2)
 
         with col1:
-            st.markdown("#### 📄 PDF Report")
-            st.markdown("Professional report with cover, summary & company table.")
-            if st.button("📄 Generate & Download PDF"):
-                with st.spinner("Generating PDF report..."):
-                    pdf_bytes = generate_pdf(df, filtered_df)
-                st.download_button(
-                    label="⬇️ Download PDF",
-                    data=pdf_bytes,
-                    file_name=f"ESG_Report_{pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')}.pdf",
-                    mime="application/pdf"
-                )
-                st.success("✅ PDF ready!")
-
-        with col2:
             st.markdown("#### 📊 CSV Export")
             st.markdown("Raw data with all ESG scores and risk labels.")
             csv = filtered_df[export_cols].to_csv(index=False).encode('utf-8')
@@ -2212,37 +2195,34 @@ with tab6:
                 mime="text/csv"
             )
 
-        with col3:
-            st.markdown("#### 📑 Excel Export ")
+        with col2:
+            st.markdown("#### 📑 Excel Export")
             st.markdown("Separate sheets per risk tier + summary.")
             if st.button("📑 Generate Excel"):
                 with st.spinner("Building Excel workbook..."):
                     excel_buf = io.BytesIO()
                     with pd.ExcelWriter(excel_buf, engine='openpyxl') as writer:
-                        # summary sheet
                         summary_data = pd.DataFrame([{
                             "Metric": m, "Value": v
                         } for m, v in [
-                            ("Total Companies",   len(filtered_df)),
-                            ("Avg ESG Score",      round(filtered_df['esg_score'].mean(),1)),
-                            ("Low Risk Count",     len(filtered_df[filtered_df['risk_label']=='Low Risk'])),
-                            ("Medium Risk Count",  len(filtered_df[filtered_df['risk_label']=='Medium Risk'])),
-                            ("High Risk Count",    len(filtered_df[filtered_df['risk_label']=='High Risk'])),
-                            ("Best Company",       filtered_df.loc[filtered_df['esg_score'].idxmax(),'company']),
-                            ("Best ESG Score",     filtered_df['esg_score'].max()),
+                            ("Total Companies", len(filtered_df)),
+                            ("Avg ESG Score", round(filtered_df['esg_score'].mean(), 1)),
+                            ("Low Risk Count", len(filtered_df[filtered_df['risk_label'] == 'Low Risk'])),
+                            ("Medium Risk Count", len(filtered_df[filtered_df['risk_label'] == 'Medium Risk'])),
+                            ("High Risk Count", len(filtered_df[filtered_df['risk_label'] == 'High Risk'])),
+                            ("Best Company", filtered_df.loc[filtered_df['esg_score'].idxmax(), 'company']),
+                            ("Best ESG Score", filtered_df['esg_score'].max()),
                         ]])
                         summary_data.to_excel(writer, sheet_name='Summary', index=False)
-                        # all data
                         filtered_df[export_cols].sort_values(
                             'esg_score', ascending=False
                         ).to_excel(writer, sheet_name='All Companies', index=False)
-                        # per-tier sheets
-                        for tier in ['Low Risk','Medium Risk','High Risk']:
+                        for tier in ['Low Risk', 'Medium Risk', 'High Risk']:
                             tier_df = filtered_df[
                                 filtered_df['risk_label'] == tier
                             ][export_cols]
                             if not tier_df.empty:
-                                sheet_name = tier.replace(' ','_')
+                                sheet_name = tier.replace(' ', '_')
                                 tier_df.sort_values(
                                     'esg_score', ascending=False
                                 ).to_excel(writer, sheet_name=sheet_name, index=False)

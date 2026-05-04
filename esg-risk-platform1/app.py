@@ -89,7 +89,7 @@ st.markdown("""
         color: white !important;
     }
     [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #1a3c5e 0%, #0d2137 100%);
+        background: linear-gradient(180deg, #1e4976 0%, #1a3c5e 100%);
     }
     [data-testid="stSidebar"] * { color: white !important; }
     [data-testid="stSidebar"] .stFileUploader {
